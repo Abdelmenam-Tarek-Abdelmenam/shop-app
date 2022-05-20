@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../ui/home_page/main_screen.dart';
+import '../ui/main_page/main_screen.dart';
 
 class Routes {
-  static const String mainRoute = "/main";
+  static const String mainRoute = "/";
 }
 
 class RouteGenerator {
   static Route<dynamic> getRoute(RouteSettings settings) {
+    print(settings.name);
     switch (settings.name) {
       case Routes.mainRoute:
-        return MaterialPageRoute(builder: (_) => const MainView());
+        // ignore: prefer_const_constructors
+        return MaterialPageRoute(builder: (_) => MainView());
       default:
         return unDefinedRoute();
     }

@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum PreferenceKey {
-  isAdmin,
+  minimumAmount,
 }
 
 extension KeyExtension on PreferenceKey {
   String get name {
     switch (this) {
-      case PreferenceKey.isAdmin:
-        return "isAdmin";
+      case PreferenceKey.minimumAmount:
+        return "minimumAmount";
     }
   }
 }
