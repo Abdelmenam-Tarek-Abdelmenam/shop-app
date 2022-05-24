@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../ui/main_page/main_screen.dart';
+import '../ui/money_details/money_screen.dart';
 
 class Routes {
   static const String mainRoute = "/";
+  static const String moneyRoute = "/Money";
 }
 
 class RouteGenerator {
@@ -11,8 +13,9 @@ class RouteGenerator {
     print(settings.name);
     switch (settings.name) {
       case Routes.mainRoute:
-        // ignore: prefer_const_constructors
-        return MaterialPageRoute(builder: (_) => MainView());
+        return MaterialPageRoute(builder: (_) => const MainView());
+      case Routes.moneyRoute:
+        return MaterialPageRoute(builder: (_) => MoneyDetailsView());
       default:
         return unDefinedRoute();
     }

@@ -28,16 +28,17 @@ class _MainViewState extends State<MainView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 15,
         title: Text(appBarTitles[activeLayout]),
         actions: getRightAction(),
       ),
       bottomNavigationBar: bottomNavigationBar(context),
-      body: const [
+      body: [
         HomeLayout(),
-        OrderLayout(),
-        EntryLayout(),
-        ProductLayout(),
-        SettingLayout(),
+        const OrderLayout(),
+        const EntryLayout(),
+        const ProductLayout(),
+        const SettingLayout(),
       ][activeLayout],
     );
   }

@@ -7,6 +7,8 @@ ThemeData lightThemeData = ThemeData(
   scaffoldBackgroundColor: ColorManager.backGroundBlue,
   appBarTheme: AppBarTheme(
       elevation: 0,
+      toolbarHeight: 50,
+      titleSpacing: 0,
       titleTextStyle: _textTheme.headline2,
       foregroundColor: ColorManager.foreGroundGrey,
       backgroundColor: Colors.white,
@@ -31,8 +33,9 @@ ThemeData lightThemeData = ThemeData(
     onSurface: ColorManager.foreGroundBlue,
     onBackground: ColorManager.foreGroundGrey,
     onSecondary: ColorManager.whiteColor,
+    onPrimary: ColorManager.lightGrey,
+
     // till here
-    onPrimary: ColorManager.darkGrey,
     secondary: ColorManager.lightBlue,
     primary: ColorManager.darkGrey,
     surface: ColorManager.darkWhite,
@@ -46,7 +49,7 @@ class ColorManager {
   static const Color foreGroundGrey = Color(0xff939094);
   static const Color foreGroundBlue = Color(0xff2D8EFF);
 
-  static const Color backGroundBlue = Color(0xffCAD6DE);
+  static const Color backGroundBlue = Color(0xffe5f2fd);
 
   static const Color mainBlue = Color(0xff2666CF);
   static const Color whiteColor = Colors.white;
@@ -66,17 +69,24 @@ final TextTheme _textTheme = TextTheme(
       fontWeight: FontWeight.w500,
       color: ColorManager.foreGroundGrey),
   headline3: GoogleFonts.poppins(
-      fontSize: 18,
-      fontWeight: FontWeight.w700,
-      color: ColorManager.foreGroundGrey),
+      //used
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      color: ColorManager.whiteColor),
   headline4: GoogleFonts.roboto(
-      fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
-  subtitle1: GoogleFonts.alegreyaSans(
+      //used
       fontSize: 16,
       fontWeight: FontWeight.w500,
       color: ColorManager.foreGroundGrey),
-  subtitle2: GoogleFonts.roboto(
-      fontSize: 12, fontWeight: FontWeight.w300, color: Colors.white),
+  subtitle1: GoogleFonts.alegreyaSans(
+      fontSize: 16,
+      fontWeight: FontWeight.w700,
+      color: ColorManager.blackColor),
+  subtitle2: GoogleFonts.alegreyaSans(
+      fontSize: 16,
+      fontWeight: FontWeight.w700,
+      color: ColorManager.foreGroundBlue),
+  // here
   button: GoogleFonts.alegreyaSans(fontSize: 16, fontWeight: FontWeight.w500),
   caption: GoogleFonts.alegreyaSans(
       fontSize: 14,
