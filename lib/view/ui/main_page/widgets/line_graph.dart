@@ -4,15 +4,17 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class LineGraph extends StatelessWidget {
-  const LineGraph(this.data, {Key? key}) : super(key: key);
+  LineGraph(this.data, {Key? key}) : super(key: key);
 
   final List<int> data;
+  late final double maxData = data.reduce(max).toDouble();
+  late final int scale = (maxData ~/ 25) * 5;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(5),
-      padding: const EdgeInsets.only(top: 12, bottom: 5, left: 5),
+      padding: const EdgeInsets.only(top: 15, bottom: 5, left: 8, right: 0),
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.onSecondary,
           borderRadius: const BorderRadius.all(Radius.circular(20))),
@@ -27,48 +29,94 @@ class LineGraph extends StatelessWidget {
 
   LineChartData mainData(BuildContext context) {
     return LineChartData(
-      minX: 0,
-      maxX: data.length.toDouble(),
-      minY: 0,
-      maxY: data.reduce(max).toDouble(),
-      lineBarsData: [
-        LineChartBarData(
-          spots: List.generate(data.length, (index) {
-            return FlSpot(index.toDouble(), data[index].toDouble());
-          }).toList(),
-          // isCurved: true,
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-          dotData: FlDotData(
-            show: false,
+        minX: 0,
+        maxX: data.length.toDouble(),
+        minY: 0,
+        maxY: maxData,
+        lineBarsData: [
+          LineChartBarData(
+            spots: List.generate(data.length, (index) {
+              return FlSpot(index.toDouble(), data[index].toDouble());
+            }).toList(),
+            // isCurved: true,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            dotData: FlDotData(
+              show: false,
+            ),
+            belowBarData: BarAreaData(
+              show: false,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+            ),
           ),
-          belowBarData: BarAreaData(
-            show: false,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+        ],
+        titlesData: FlTitlesData(
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 22,
+              interval: scale.toDouble(),
+              getTitlesWidget: (val, _) => Text(
+                val % (scale) == 0 ? "${val.round()}" : '',
+                style: TextStyle(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.5),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12),
+              ),
+            ),
           ),
+          bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+            showTitles: true,
+            interval: 1,
+            getTitlesWidget: (val, _) => Text(
+              '',
+              style: TextStyle(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onBackground
+                      .withOpacity(0.5),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12),
+            ),
+          )),
         ),
-      ],
-      gridData: FlGridData(
-        show: true,
-        drawVerticalLine: true,
-        getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
-            strokeWidth: 0.25,
-          );
-        },
-        getDrawingVerticalLine: (value) {
-          return FlLine(
-            color: Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
-            strokeWidth: 0.25,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: false,
-      ),
-      borderData: FlBorderData(
-        show: false,
-      ),
-    );
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: true,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color:
+                  Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
+              strokeWidth: 0.25,
+            );
+          },
+          getDrawingVerticalLine: (value) {
+            return FlLine(
+              color:
+                  Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
+              strokeWidth: 0.25,
+            );
+          },
+        ),
+        borderData: FlBorderData(
+          show: true,
+          border: Border(
+              bottom: BorderSide(
+                color:
+                    Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
+                width: 0.5,
+              ),
+              left: BorderSide(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onBackground
+                      .withOpacity(0.5),
+                  width: 0.5)),
+        ));
   }
 }

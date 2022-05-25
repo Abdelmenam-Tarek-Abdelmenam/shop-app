@@ -4,7 +4,10 @@ import 'package:shop/view/ui/money_details/widgets/edit_box.dart';
 import 'package:shop/view/ui/money_details/widgets/old_edits.dart';
 
 class MoneyDetailsView extends StatelessWidget {
-  const MoneyDetailsView({Key? key}) : super(key: key);
+  MoneyDetailsView({Key? key}) : super(key: key);
+  final TextEditingController amountController =
+      TextEditingController(text: "10");
+  final TextEditingController notesController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,7 @@ class MoneyDetailsView extends StatelessWidget {
                 Text("Edit Money",
                     style: Theme.of(context).textTheme.headline4),
                 divider(),
-                EditBox(),
+                EditBox(notesController, amountController),
                 ...List.generate(2, (index) => divider()),
                 Text("Old Edits", style: Theme.of(context).textTheme.headline4),
                 divider(),

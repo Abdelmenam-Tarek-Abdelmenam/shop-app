@@ -12,7 +12,7 @@ class DateRepository {
         context: context,
         initialDate: initial,
         firstDate: DateTime(now.year, 1),
-        lastDate: DateTime(now.year + 2, 12));
+        lastDate: DateTime(now.year, 12));
     return picked ?? initial;
   }
 
