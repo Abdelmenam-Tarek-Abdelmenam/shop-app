@@ -22,10 +22,24 @@ ThemeData lightThemeData = ThemeData(
   brightness: Brightness.light,
   primaryColorDark: ColorManager.darkGrey,
   primaryColorLight: ColorManager.darkGrey,
+  listTileTheme: ListTileThemeData(
+    tileColor: ColorManager.whiteColor,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-    backgroundColor: MaterialStateProperty.all(ColorManager.darkGrey),
+    backgroundColor: MaterialStateProperty.all(ColorManager.foreGroundBlue),
+    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+    )),
     foregroundColor: MaterialStateProperty.all(ColorManager.darkWhite),
+  )),
+  outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+    side: MaterialStateBorderSide.resolveWith((states) =>
+        BorderSide(color: Colors.grey.withOpacity(0.4), width: 2.0)),
+    foregroundColor: MaterialStateProperty.all(ColorManager.darkGrey),
   )),
   textTheme: _textTheme,
   colorScheme: const ColorScheme(

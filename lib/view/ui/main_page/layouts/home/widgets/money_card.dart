@@ -22,7 +22,9 @@ class MoneyCard extends StatelessWidget {
     );
   }
 
-  Widget upperBox(BuildContext context) => Container(
+  Widget upperBox(BuildContext context) => Hero(
+      tag: "MoneyBox",
+      child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
             boxShadow: StyleManager.shadow,
@@ -60,7 +62,7 @@ class MoneyCard extends StatelessWidget {
             ),
           ],
         ),
-      );
+      ));
 
   Widget verticalLine(BuildContext context) => Container(
         height: 60.0,

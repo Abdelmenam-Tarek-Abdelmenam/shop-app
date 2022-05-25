@@ -1,155 +1,87 @@
 import 'package:flutter/material.dart';
 import 'package:shop/view/resources/styles_manager.dart';
-import 'package:shop/view/shared/widgets/numeric_field.dart';
+import 'package:shop/view/ui/money_details/widgets/edit_box.dart';
+import 'package:shop/view/ui/money_details/widgets/old_edits.dart';
 
-enum EditType { add, remove }
-
-// ignore: must_be_immutable
 class MoneyDetailsView extends StatelessWidget {
-  MoneyDetailsView({Key? key}) : super(key: key);
-
-  final TextEditingController amountController =
-      TextEditingController(text: "0");
-  EditType editType = EditType.add;
+  const MoneyDetailsView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text("Money Box"),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              upperBox(context),
-              divider(),
-              divider(),
-              Text("Edit Money", style: Theme.of(context).textTheme.headline4),
-              divider(),
-              editBox(context),
-              Text("Old Edits", style: Theme.of(context).textTheme.headline4),
-            ],
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text("Money Box"),
           ),
-        ));
+          body: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                upperBox(context),
+                ...List.generate(2, (index) => divider()),
+                Text("Edit Money",
+                    style: Theme.of(context).textTheme.headline4),
+                divider(),
+                EditBox(),
+                ...List.generate(2, (index) => divider()),
+                Text("Old Edits", style: Theme.of(context).textTheme.headline4),
+                divider(),
+                OldEditList(),
+              ],
+            ),
+          )),
+    );
   }
 
-  Widget upperBox(BuildContext context) => Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            boxShadow: StyleManager.shadow,
-            color: Theme.of(context).colorScheme.onSecondary,
-            borderRadius: StyleManager.border),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Column(
-              children: [
-                Text(
-                  "Money",
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-                divider(),
-                Text(
-                  "850 EGP",
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-                divider(),
-                Text(
-                  "Revenue 75 EGP",
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-              ],
-            ),
-            verticalLine(context),
-            Column(
-              children: [
-                Text("Today", style: Theme.of(context).textTheme.subtitle1),
-                divider(),
-                Text("500 EGP", style: Theme.of(context).textTheme.subtitle1),
-                divider(),
-                Text(
-                  "75 EGP",
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-              ],
-            ),
-          ],
+  Widget upperBox(BuildContext context) => Hero(
+        tag: "MoneyBox",
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              boxShadow: StyleManager.shadow,
+              color: Theme.of(context).colorScheme.onSecondary,
+              borderRadius: StyleManager.border),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    "Money",
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                  divider(),
+                  Text(
+                    "850 EGP",
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                  divider(),
+                  Text(
+                    "Revenue 75 EGP",
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                ],
+              ),
+              verticalLine(context),
+              Column(
+                children: [
+                  Text("Today", style: Theme.of(context).textTheme.subtitle1),
+                  divider(),
+                  Text("500 EGP", style: Theme.of(context).textTheme.subtitle1),
+                  divider(),
+                  Text(
+                    "75 EGP",
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       );
-
-  Widget editBox(BuildContext context) => Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-          boxShadow: StyleManager.shadow,
-          color: Theme.of(context).colorScheme.onSecondary,
-          borderRadius: StyleManager.border),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(child: NumericField(amountController)),
-              Expanded(
-                child: _radioButtons(context),
-              )
-            ],
-          )
-        ],
-      ));
-
-  Widget _radioButtons(BuildContext context) => StatefulBuilder(
-      builder: (context, setState) => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                SizedBox(
-                  width: 20,
-                  child: Radio<EditType>(
-                      value: editType,
-                      fillColor: MaterialStateColor.resolveWith(
-                          (states) => Colors.red),
-                      groupValue: EditType.add,
-                      onChanged: (val) {
-                        setState(() {
-                          editType = EditType.add;
-                        });
-                      }),
-                ),
-                const SizedBox(
-                  width: 15,
-                ),
-                const Text(
-                  "Add",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ]),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                SizedBox(
-                  width: 20,
-                  child: Radio<EditType>(
-                      value: editType,
-                      fillColor: MaterialStateColor.resolveWith(
-                          (states) => Colors.blue),
-                      groupValue: EditType.remove,
-                      onChanged: (val) {
-                        setState(() {
-                          editType = EditType.remove;
-                        });
-                      }),
-                ),
-                const SizedBox(
-                  width: 15,
-                ),
-                // ignore: prefer_const_constructors
-                Text(
-                  "Remove",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ]),
-            ],
-          ));
 
   Widget verticalLine(BuildContext context) => Container(
         height: 60.0,

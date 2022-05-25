@@ -15,7 +15,7 @@ class RouteGenerator {
       case Routes.mainRoute:
         return MaterialPageRoute(builder: (_) => const MainView());
       case Routes.moneyRoute:
-        return MaterialPageRoute(builder: (_) => MoneyDetailsView());
+        return MaterialPageRoute(builder: (_) => const MoneyDetailsView());
       default:
         return unDefinedRoute();
     }
