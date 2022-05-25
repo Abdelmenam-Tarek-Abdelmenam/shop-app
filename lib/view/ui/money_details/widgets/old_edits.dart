@@ -43,7 +43,7 @@ class OldEditList extends StatelessWidget {
                     size: 20,
                     color: item.type.color,
                   ),
-                  Text(item.type.name,
+                  Text(item.type.text,
                       style: Theme.of(context)
                           .textTheme
                           .subtitle1!

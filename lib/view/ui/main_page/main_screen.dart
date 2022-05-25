@@ -35,8 +35,8 @@ class _MainViewState extends State<MainView> {
       bottomNavigationBar: bottomNavigationBar(context),
       body: [
         HomeLayout(),
-        const OrderLayout(),
-        const EntryLayout(),
+        OrderLayout(),
+        EntryLayout(),
         const ProductLayout(),
         const SettingLayout(),
       ][activeLayout],
