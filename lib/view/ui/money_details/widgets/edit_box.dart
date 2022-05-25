@@ -9,10 +9,10 @@ import '../../../shared/widgets/numeric_field.dart';
 
 // ignore: must_be_immutable
 class EditBox extends StatelessWidget {
-  EditBox({Key? key}) : super(key: key);
-  final TextEditingController amountController =
-      TextEditingController(text: "10");
-  final TextEditingController notesController = TextEditingController();
+  EditBox(this.notesController, this.amountController, {Key? key})
+      : super(key: key);
+  final TextEditingController amountController;
+  final TextEditingController notesController;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   EditType editType = EditType.add;
   DateTime editDate = DateTime.now();

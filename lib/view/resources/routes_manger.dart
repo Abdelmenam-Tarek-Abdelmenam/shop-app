@@ -10,12 +10,11 @@ class Routes {
 
 class RouteGenerator {
   static Route<dynamic> getRoute(RouteSettings settings) {
-    print(settings.name);
     switch (settings.name) {
       case Routes.mainRoute:
         return MaterialPageRoute(builder: (_) => const MainView());
       case Routes.moneyRoute:
-        return MaterialPageRoute(builder: (_) => const MoneyDetailsView());
+        return MaterialPageRoute(builder: (_) => MoneyDetailsView());
       default:
         return unDefinedRoute();
     }
