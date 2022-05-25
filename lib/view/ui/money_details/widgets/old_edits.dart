@@ -26,7 +26,11 @@ class OldEditList extends StatelessWidget {
   }
 
   Widget listItem(BuildContext context, OldMoneyEdit item) => ListTile(
-        title: Text(item.notes),
+        title: Text(
+          item.notes,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         subtitle: Text("${item.date} - ${item.time}"),
         trailing: FittedBox(
           fit: BoxFit.fill,

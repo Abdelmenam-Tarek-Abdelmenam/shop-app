@@ -92,6 +92,13 @@ final TextTheme _textTheme = TextTheme(
       fontSize: 16,
       fontWeight: FontWeight.w500,
       color: ColorManager.foreGroundGrey),
+  caption: GoogleFonts.alegreyaSans(
+      //used
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0.4,
+      color: ColorManager.blackColor),
+
   subtitle1: GoogleFonts.alegreyaSans(
       fontSize: 16,
       fontWeight: FontWeight.w700,
@@ -100,13 +107,9 @@ final TextTheme _textTheme = TextTheme(
       fontSize: 16,
       fontWeight: FontWeight.w700,
       color: ColorManager.foreGroundBlue),
+
   // here
   button: GoogleFonts.alegreyaSans(fontSize: 16, fontWeight: FontWeight.w500),
-  caption: GoogleFonts.alegreyaSans(
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.4,
-      color: ColorManager.darkGrey),
   overline: GoogleFonts.alegreyaSans(
       fontSize: 14,
       fontWeight: FontWeight.w400,

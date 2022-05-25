@@ -14,7 +14,7 @@ class LineGraph extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(5),
-      padding: const EdgeInsets.only(top: 15, bottom: 5, left: 8, right: 0),
+      padding: const EdgeInsets.only(top: 15, bottom: 0, left: 8, right: 0),
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.onSecondary,
           borderRadius: const BorderRadius.all(Radius.circular(20))),

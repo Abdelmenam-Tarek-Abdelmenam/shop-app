@@ -37,7 +37,7 @@ class _MainViewState extends State<MainView> {
         HomeLayout(),
         OrderLayout(),
         EntryLayout(),
-        const ProductLayout(),
+        ProductLayout(),
         const SettingLayout(),
       ][activeLayout],
     );

@@ -15,6 +15,7 @@ class HomeLayout extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 10, 15, 2),
       child: ListView(
+        physics: const BouncingScrollPhysics(),
         children: [
           Text("Sales today", style: Theme.of(context).textTheme.headline4),
           const MoneyCard(),

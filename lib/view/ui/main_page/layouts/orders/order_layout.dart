@@ -15,8 +15,6 @@ class OrderLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return Container();
-
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: ListView(
@@ -57,7 +55,11 @@ class OrderLayout extends StatelessWidget {
   }
 
   Widget listItem(BuildContext context, OrderModel item) => ListTile(
-        title: Text(item.name),
+        title: Text(
+          item.name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         isThreeLine: false,
         subtitle: Text("${item.date} | ${item.itemsCount} items"),
         trailing: FittedBox(

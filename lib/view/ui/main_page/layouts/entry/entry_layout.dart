@@ -54,7 +54,11 @@ class EntryLayout extends StatelessWidget {
   }
 
   Widget listItem(BuildContext context, EntryModel item) => ListTile(
-        title: Text(item.name),
+        title: Text(
+          item.name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         isThreeLine: false,
         subtitle: Text("${item.date} | ${item.itemsCount} items"),
         trailing: FittedBox(
