@@ -4,7 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class NumericField extends StatelessWidget {
   final TextEditingController controller;
-  const NumericField(this.controller, {Key? key}) : super(key: key);
+  final String? title;
+  const NumericField(this.controller, {this.title, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,11 @@ class NumericField extends StatelessWidget {
         },
         textAlign: TextAlign.center,
         decoration: InputDecoration(
+            labelText: title,
+            labelStyle: const TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
             contentPadding: EdgeInsets.zero,
             prefixIcon: IconButton(
               icon: Icon(

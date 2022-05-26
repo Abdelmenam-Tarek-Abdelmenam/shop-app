@@ -5,6 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 ThemeData lightThemeData = ThemeData(
   backgroundColor: ColorManager.backGroundBlue,
   scaffoldBackgroundColor: ColorManager.backGroundBlue,
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: ColorManager.whiteColor,
+    foregroundColor: ColorManager.foreGroundGrey,
+  ),
   appBarTheme: AppBarTheme(
       elevation: 0,
       toolbarHeight: 50,
@@ -48,10 +52,10 @@ ThemeData lightThemeData = ThemeData(
     onBackground: ColorManager.foreGroundGrey,
     onSecondary: ColorManager.whiteColor,
     onPrimary: ColorManager.lightGrey,
+    primary: ColorManager.darkGrey,
 
     // till here
     secondary: ColorManager.lightBlue,
-    primary: ColorManager.darkGrey,
     surface: ColorManager.darkWhite,
     error: ColorManager.whiteColor,
     onError: ColorManager.lightGrey,

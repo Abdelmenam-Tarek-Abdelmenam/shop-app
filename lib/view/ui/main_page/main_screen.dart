@@ -6,6 +6,8 @@ import 'package:shop/view/ui/main_page/layouts/orders/order_layout.dart';
 import 'package:shop/view/ui/main_page/layouts/products/product_layout.dart';
 import 'package:shop/view/ui/main_page/layouts/setting/setting_layout.dart';
 
+import '../../resources/routes_manger.dart';
+
 const List<String> appBarTitles = [
   "Home",
   "Orders",
@@ -49,7 +51,19 @@ class _MainViewState extends State<MainView> {
         IconButton(
             onPressed: () {}, icon: const Icon(Icons.filter_alt_outlined)),
         IconButton(
-            onPressed: () {},
+            onPressed: () {
+              switch (activeLayout) {
+                case 1:
+                  Navigator.pushNamed(context, Routes.addOrderRoute);
+                  break;
+                case 2:
+                  Navigator.pushNamed(context, Routes.addEntryRoute);
+                  break;
+                case 3:
+                  Navigator.pushNamed(context, Routes.addProductRoute);
+                  break;
+              }
+            },
             icon: const Icon(
               Icons.add,
               size: 35,

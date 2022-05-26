@@ -49,9 +49,9 @@ class FileHandling {
         context: context,
         builder: (_) => Container(
               margin: const EdgeInsets.only(bottom: 10, left: 12, right: 12),
-              height: 85,
+              height: 50,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   button(context, "Gallery", Icons.photo_outlined,
@@ -71,13 +71,13 @@ class FileHandling {
       OutlinedButton.icon(
         style: OutlinedButton.styleFrom(
           shape: const StadiumBorder(),
-          fixedSize: const Size(150, 50),
+          // fixedSize: const Size(150, 50),
         ),
         label: Text(text),
         onPressed: () => Navigator.pop(context, source),
         icon: Icon(
           icon,
-          size: 35,
+          size: 20,
         ),
       );
 

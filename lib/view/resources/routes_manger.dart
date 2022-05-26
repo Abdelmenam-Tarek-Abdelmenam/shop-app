@@ -25,13 +25,13 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => MoneyDetailsView());
       case Routes.addProductRoute:
         return MaterialPageRoute(
-            builder: (_) => AddProductView(settings.arguments! as Product));
+            builder: (_) => AddProductView(settings.arguments as Product?));
       case Routes.addEntryRoute:
         return MaterialPageRoute(
-            builder: (_) => AddEntryView(settings.arguments! as EntryModel));
+            builder: (_) => AddEntryView(settings.arguments as EntryModel?));
       case Routes.addOrderRoute:
         return MaterialPageRoute(
-            builder: (_) => AddOrderView(settings.arguments! as OrderModel));
+            builder: (_) => AddOrderView(settings.arguments as OrderModel?));
       default:
         return unDefinedRoute();
     }
