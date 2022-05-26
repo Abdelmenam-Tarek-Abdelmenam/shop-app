@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop/model/repository/database_repo.dart';
 
 enum EditType { add, remove }
 
@@ -32,6 +33,7 @@ extension GetWidget on EditType {
 }
 
 class OldMoneyEdit {
+  int id;
   EditType type;
   String date;
   String time;
@@ -43,14 +45,27 @@ class OldMoneyEdit {
       required this.notes,
       required this.date,
       required this.amount,
+      required this.id,
       required this.time});
 
   factory OldMoneyEdit.fromJson(Map<String, dynamic> json) {
     return OldMoneyEdit(
-        type: json['type'] == 0 ? EditType.add : EditType.remove,
-        notes: json['notes'],
-        date: json['date'],
-        amount: json['amount'],
-        time: json['time']);
+        id: json[MoneyEditTable.id],
+        type: json[MoneyEditTable.type] == 0 ? EditType.add : EditType.remove,
+        notes: json[MoneyEditTable.notes],
+        date: json[MoneyEditTable.date],
+        amount: json[MoneyEditTable.amount],
+        time: json[MoneyEditTable.time]);
+  }
+
+  Map<String, dynamic> get toJson {
+    return {
+      MoneyEditTable.id: id,
+      MoneyEditTable.notes: notes,
+      MoneyEditTable.date: date,
+      MoneyEditTable.amount: amount,
+      MoneyEditTable.time: time,
+      MoneyEditTable.type: type == EditType.add ? 0 : 1
+    };
   }
 }

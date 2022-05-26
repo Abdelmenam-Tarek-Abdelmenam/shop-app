@@ -6,6 +6,7 @@ class OldEditList extends StatelessWidget {
   OldEditList({Key? key}) : super(key: key);
 
   final OldMoneyEdit oldMoneyEdit = OldMoneyEdit(
+      id: 0,
       type: EditType.add,
       notes: "Water invoice",
       date: "25-052022",

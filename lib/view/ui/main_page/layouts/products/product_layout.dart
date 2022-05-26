@@ -10,7 +10,7 @@ class ProductLayout extends StatelessWidget {
     name: 'Laser Bag',
     date: '11-9-2020',
     amount: 10,
-    id: '1',
+    id: 2,
     img: const [],
     realPrice: 10,
     sellPrice: 12,

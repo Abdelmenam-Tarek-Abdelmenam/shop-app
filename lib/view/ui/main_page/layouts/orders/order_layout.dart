@@ -5,6 +5,7 @@ import '../../../../../model/module/deals.dart';
 class OrderLayout extends StatelessWidget {
   OrderLayout({Key? key}) : super(key: key);
   final OrderModel orderModel = OrderModel(
+      id: 0,
       profit: 100,
       totalMoney: 120,
       date: '11-5-200',

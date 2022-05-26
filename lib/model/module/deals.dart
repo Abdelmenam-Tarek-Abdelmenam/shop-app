@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shop/model/repository/database_repo.dart';
 
 class Deal {
+  int id;
   double totalMoney;
   String date;
   String time;
@@ -12,30 +14,12 @@ class Deal {
 
   Deal(
       {required this.items,
+      required this.id,
       required this.type,
       required this.totalMoney,
       required this.name,
       required this.date,
       required this.time});
-
-  factory Deal.fromJson(Map<String, dynamic> json) {
-    return Deal(
-        type: json['type'] == 0 ? PaymentType.paid : PaymentType.not,
-        items: json['items'],
-        date: json['date'],
-        name: json['name'],
-        time: json['time'],
-        totalMoney: json['money']);
-  }
-
-  Map<String, dynamic> get toJson => {
-        "type": type == PaymentType.paid ? 0 : 1,
-        "items": items.map((e) => e.toJson).toList(),
-        "date": date,
-        "name": name,
-        "time": time,
-        "money": totalMoney
-      };
 }
 
 class DealProduct {
@@ -62,13 +46,38 @@ class EntryModel extends Deal {
     required String name,
     required List<DealProduct> items,
     required PaymentType type,
+    required int id,
   }) : super(
+            id: id,
             date: date,
             items: items,
             name: name,
             type: type,
             time: time,
             totalMoney: totalMoney);
+
+  factory EntryModel.fromJson(Map<String, dynamic> json) {
+    return EntryModel(
+        id: json[EntryTable.id],
+        type: json[EntryTable.type] == 0 ? PaymentType.paid : PaymentType.not,
+        items: json[EntryTable.items]
+            .map<DealProduct>((item) => DealProduct.fromJson(item))
+            .toList(),
+        date: json[EntryTable.date],
+        name: json[EntryTable.name],
+        time: json[EntryTable.time],
+        totalMoney: json[EntryTable.totalMoney]);
+  }
+
+  Map<String, dynamic> get toJson => {
+        EntryTable.id: id,
+        EntryTable.items: items.map((e) => e.toJson).toList(),
+        EntryTable.date: date,
+        EntryTable.name: name,
+        EntryTable.time: time,
+        EntryTable.totalMoney: totalMoney,
+        EntryTable.type: type == PaymentType.paid ? 0 : 1
+      };
 }
 
 class OrderModel extends Deal {
@@ -82,7 +91,9 @@ class OrderModel extends Deal {
     required String name,
     required List<DealProduct> items,
     required PaymentType type,
+    required int id,
   }) : super(
+            id: id,
             date: date,
             items: items,
             name: name,
@@ -90,26 +101,28 @@ class OrderModel extends Deal {
             time: time,
             totalMoney: totalMoney);
 
-  @override
   Map<String, dynamic> get toJson => {
-        "type": type == PaymentType.paid ? 0 : 1,
-        "items": items.map((e) => e.toJson).toList(),
-        "profit": profit,
-        "date": date,
-        "name": name,
-        "time": time,
-        "money": totalMoney
+        OrderTable.id: id,
+        OrderTable.type: type == PaymentType.paid ? 0 : 1,
+        OrderTable.items: items.map((e) => e.toJson).toList(),
+        OrderTable.date: date,
+        OrderTable.name: name,
+        OrderTable.time: time,
+        OrderTable.totalMoney: totalMoney,
+        OrderTable.profit: profit
       };
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
-        type: json['type'] == 0 ? PaymentType.paid : PaymentType.not,
-        items: json['items'].map((p) => DealProduct.fromJson(p)).toList(),
-        date: json['date'],
-        name: json['name'],
-        time: json['time'],
-        profit: json['profit'],
-        totalMoney: json['money']);
+        id: json[OrderTable.id],
+        type: json[OrderTable.type] == 0 ? PaymentType.paid : PaymentType.not,
+        items:
+            json[OrderTable.items].map((p) => DealProduct.fromJson(p)).toList(),
+        date: json[OrderTable.date],
+        name: json[OrderTable.name],
+        time: json[OrderTable.time],
+        profit: json[OrderTable.profit],
+        totalMoney: json[OrderTable.totalMoney]);
   }
 }
 

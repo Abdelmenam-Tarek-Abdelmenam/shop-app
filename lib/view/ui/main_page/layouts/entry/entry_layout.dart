@@ -5,6 +5,7 @@ import '../../../../../model/module/deals.dart';
 class EntryLayout extends StatelessWidget {
   EntryLayout({Key? key}) : super(key: key);
   final EntryModel orderModel = EntryModel(
+      id: 0,
       totalMoney: 120,
       date: '11-5-200',
       time: '11:20 AM',
