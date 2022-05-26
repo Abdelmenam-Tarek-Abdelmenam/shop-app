@@ -19,6 +19,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   intl: ^0.17.0
+  permission_handler: ^9.2.0
 
   #bloc
   bloc: ^8.0.3
@@ -35,8 +36,10 @@ dependencies:
   fl_chart: ^0.50.6
   google_nav_bar: ^5.0.6
   font_awesome_flutter: ^10.1.0
-  #images
+  #files
   image_picker: ^0.8.5+3
+  path_provider: ^2.0.10
+  file_picker: ^4.6.0
 
 
 dev_dependencies:

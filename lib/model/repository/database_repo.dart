@@ -1,3 +1,9 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shop/model/module/deals.dart';
 import 'package:shop/model/module/old_edit_money.dart';
 import 'package:shop/model/module/product.dart';
@@ -5,8 +11,10 @@ import 'package:sqflite/sqflite.dart';
 
 part '../contstants/database_schema.dart';
 
-const String dataBasePath = "data.db";
-typedef ReturnedData = List<Map<String, dynamic>>;
+part '../local/saving_files.dart';
+
+const String _dataBasePath = "data.db";
+typedef _ReturnedData = List<Map<String, dynamic>>;
 
 class DataBaseRepository {
   late Database _database;
@@ -15,33 +23,37 @@ class DataBaseRepository {
     _init();
   }
 
+  set database(Database database) {
+    _database = database;
+  }
+
   Future<Product> getProduct(String id) async {
-    ReturnedData data = await _database.query(ProductsTable.tableName,
+    _ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.id} = ?", whereArgs: [id]);
     if (data.isEmpty) return Product.empty();
     return Product.fromJson(data.first);
   }
 
   Future<List<Product>> getProducts(List<String> ids) async {
-    ReturnedData data = await _database.query(ProductsTable.tableName,
+    _ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.id} IN (${ids.join(',')})");
     return data.map((e) => Product.fromJson(e)).toList();
   }
 
   Future<List<Product>> searchProducts(String search) async {
-    ReturnedData data = await _database.query(ProductsTable.tableName,
+    _ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.name} LIKE '%$search%'");
     return data.map((e) => Product.fromJson(e)).toList();
   }
 
   Future<List<EntryModel>> searchEntries(String search) async {
-    ReturnedData data = await _database.query(EntryTable.tableName,
+    _ReturnedData data = await _database.query(EntryTable.tableName,
         where: "${EntryTable.name} LIKE '%$search%'");
     return data.map((e) => EntryModel.fromJson(e)).toList();
   }
 
   Future<List<OrderModel>> searchOrders(String search) async {
-    ReturnedData data = await _database.query(OrderTable.tableName,
+    _ReturnedData data = await _database.query(OrderTable.tableName,
         where: "${OrderTable.name} LIKE '%$search%'");
     return data.map((e) => OrderModel.fromJson(e)).toList();
   }
@@ -85,14 +97,14 @@ class DataBaseRepository {
   }
 
   Future<Product> getZeroAmountProduct() async {
-    ReturnedData data = await _database.query(ProductsTable.tableName,
+    _ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.amount} = 0");
     if (data.isEmpty) return Product.empty();
     return Product.fromJson(data.first);
   }
 
   Future<Product> getLessAmountProduct(int min) async {
-    ReturnedData data = await _database.query(ProductsTable.tableName,
+    _ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.amount} < $min");
     if (data.isEmpty) return Product.empty();
     return Product.fromJson(data.first);
@@ -141,27 +153,27 @@ class DataBaseRepository {
   }
 
   Future<List<Product>> getAllProducts() async {
-    ReturnedData data = await _database.query(ProductsTable.tableName);
+    _ReturnedData data = await _database.query(ProductsTable.tableName);
     return data.map((e) => Product.fromJson(e)).toList();
   }
 
   Future<List<EntryModel>> getAllEntries() async {
-    ReturnedData data = await _database.query(EntryTable.tableName);
+    _ReturnedData data = await _database.query(EntryTable.tableName);
     return data.map((e) => EntryModel.fromJson(e)).toList();
   }
 
   Future<List<OldMoneyEdit>> getAllMoneyEdits() async {
-    ReturnedData data = await _database.query(MoneyEditTable.tableName);
+    _ReturnedData data = await _database.query(MoneyEditTable.tableName);
     return data.map((e) => OldMoneyEdit.fromJson(e)).toList();
   }
 
   Future<List<EntryModel>> getAllOrders() async {
-    ReturnedData data = await _database.query(OrderTable.tableName);
+    _ReturnedData data = await _database.query(OrderTable.tableName);
     return data.map((e) => EntryModel.fromJson(e)).toList();
   }
 
   Future<void> _init() async {
-    _database = await openDatabase(dataBasePath, onCreate: _createDataBase);
+    _database = await openDatabase(_dataBasePath, onCreate: _createDataBase);
   }
 
   Future<void> _createDataBase(Database db, int _) async {
@@ -176,6 +188,6 @@ class DataBaseRepository {
     for (String name in _TablesSchema.allNames) {
       await _database.delete(name);
     }
-    await deleteDatabase(dataBasePath);
+    await deleteDatabase(_dataBasePath);
   }
 }
