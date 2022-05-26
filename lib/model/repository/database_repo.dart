@@ -19,6 +19,8 @@ typedef _ReturnedData = List<Map<String, dynamic>>;
 class DataBaseRepository {
   late Database _database;
 
+  String get dataBasePath => _database.path;
+
   DataBaseRepository() {
     _init();
   }

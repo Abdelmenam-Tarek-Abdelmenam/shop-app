@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:shop/model/module/product.dart';
 
@@ -11,7 +13,7 @@ class ProductLayout extends StatelessWidget {
     date: '11-9-2020',
     amount: 10,
     id: 2,
-    img: const [],
+    img: Uint8List(0),
     realPrice: 10,
     sellPrice: 12,
   );

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 
 import '../repository/database_repo.dart';
@@ -6,7 +8,7 @@ import '../repository/database_repo.dart';
 class Product extends Equatable {
   int id;
   String date;
-  List<int> img; //TODO: CORRECT TYPE
+  Uint8List img; //TODO: CORRECT TYPE
   String name;
   String notes;
   double amount;
@@ -53,7 +55,7 @@ class Product extends Equatable {
         date: '',
         amount: 0,
         id: 0,
-        img: const [],
+        img: Uint8List(0),
         realPrice: 0,
         sellPrice: 0);
   }
