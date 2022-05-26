@@ -4,7 +4,7 @@ const String _myDirectory = "Shop App";
 const String _myExtension = "men";
 const String _myFileName = "Shop_Data";
 
-class DataBaseFileHandling {
+class FileHandling {
   Future<Database?> importDataBase(String path) async {
     FilePickerResult? value = await FilePicker.platform
         .pickFiles(type: FileType.custom, allowedExtensions: [_myExtension]);
@@ -35,6 +35,51 @@ class DataBaseFileHandling {
       }
     }
   }
+
+  Future<Uint8List?> pickImage(BuildContext context) async {
+    ImageSource? source = await _getImageSource(context);
+    if (source == null) return null;
+    final XFile? image =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    return image?.readAsBytes();
+  }
+
+  Future<ImageSource?> _getImageSource(BuildContext context) async {
+    return await showModalBottomSheet<ImageSource>(
+        context: context,
+        builder: (_) => Container(
+              margin: const EdgeInsets.only(bottom: 10, left: 12, right: 12),
+              height: 85,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  button(context, "Gallery", Icons.photo_outlined,
+                      ImageSource.gallery),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  button(context, "Camera", Icons.photo_camera_outlined,
+                      ImageSource.camera),
+                ],
+              ),
+            ));
+  }
+
+  Widget button(BuildContext context, String text, IconData icon,
+          ImageSource source) =>
+      OutlinedButton.icon(
+        style: OutlinedButton.styleFrom(
+          shape: const StadiumBorder(),
+          fixedSize: const Size(150, 50),
+        ),
+        label: Text(text),
+        onPressed: () => Navigator.pop(context, source),
+        icon: Icon(
+          icon,
+          size: 35,
+        ),
+      );
 
   Future<String> _findPath() async {
     Directory? dir = await getExternalStorageDirectory();
