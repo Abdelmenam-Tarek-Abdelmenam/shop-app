@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -13,18 +14,20 @@ import 'package:sqflite/sqflite.dart';
 
 part '../contstants/database_schema.dart';
 
-part 'saving_files.dart';
+part 'files_handling.dart';
 
 const String _dataBasePath = "data.db";
 typedef _ReturnedData = List<Map<String, dynamic>>;
 
 class DataBaseRepository {
-  late Database _database;
+  static DataBaseRepository? _instance;
+  static DataBaseRepository get instance => _instance ??= DataBaseRepository();
 
+  late Database _database;
   String get dataBasePath => _database.path;
 
   DataBaseRepository() {
-    _init();
+    _initDataBase();
   }
 
   set database(Database database) {
@@ -176,7 +179,7 @@ class DataBaseRepository {
     return data.map((e) => EntryModel.fromJson(e)).toList();
   }
 
-  Future<void> _init() async {
+  Future<void> _initDataBase() async {
     _database = await openDatabase(_dataBasePath, onCreate: _createDataBase);
   }
 

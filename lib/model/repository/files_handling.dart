@@ -4,7 +4,7 @@ const String _myDirectory = "Shop App";
 const String _myExtension = "men";
 const String _myFileName = "Shop_Data";
 
-class FileHandling {
+class DbFileHandling {
   Future<Database?> importDataBase(String path) async {
     FilePickerResult? value = await FilePicker.platform
         .pickFiles(type: FileType.custom, allowedExtensions: [_myExtension]);
@@ -36,12 +36,45 @@ class FileHandling {
     }
   }
 
+  Future<String> _findPath() async {
+    Directory? dir = await getExternalStorageDirectory();
+    String newPath = "";
+    List<String> folders = dir!.path.split("/");
+    for (int x = 1; x < folders.length; x++) {
+      if (folders[x] != 'Android') {
+        newPath += "/" + folders[x];
+      } else {
+        break;
+      }
+    }
+    newPath = newPath + "/$_myDirectory";
+    return newPath;
+  }
+}
+
+class ImageFileHandling {
   Future<Uint8List?> pickImage(BuildContext context) async {
     ImageSource? source = await _getImageSource(context);
     if (source == null) return null;
-    final XFile? image =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    return image?.readAsBytes();
+    final XFile? image = await ImagePicker().pickImage(source: source);
+    if (image == null) return null;
+
+    // String encoded = DataEncoding.encode(Uint8List);
+    // print("Encoded Image Length: ${encoded.length}");
+    // Uint8List.fromList(List<int>.from(DataEncoding.decode(encoded)));
+
+    return compressImage(image);
+  }
+
+  Future<Uint8List?> compressImage(XFile file) async {
+    String programPath = (await getTemporaryDirectory()).path;
+    File? result = await FlutterImageCompress.compressAndGetFile(
+      file.path,
+      "$programPath/output.jpg",
+      quality: 50,
+    );
+
+    return result?.readAsBytes();
   }
 
   Future<ImageSource?> _getImageSource(BuildContext context) async {
@@ -54,24 +87,23 @@ class FileHandling {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  button(context, "Gallery", Icons.photo_outlined,
+                  _button(context, "Gallery", Icons.photo_outlined,
                       ImageSource.gallery),
                   const SizedBox(
                     width: 10,
                   ),
-                  button(context, "Camera", Icons.photo_camera_outlined,
+                  _button(context, "Camera", Icons.photo_camera_outlined,
                       ImageSource.camera),
                 ],
               ),
             ));
   }
 
-  Widget button(BuildContext context, String text, IconData icon,
+  Widget _button(BuildContext context, String text, IconData icon,
           ImageSource source) =>
       OutlinedButton.icon(
         style: OutlinedButton.styleFrom(
           shape: const StadiumBorder(),
-          // fixedSize: const Size(150, 50),
         ),
         label: Text(text),
         onPressed: () => Navigator.pop(context, source),
@@ -80,21 +112,4 @@ class FileHandling {
           size: 20,
         ),
       );
-
-  Future<String> _findPath() async {
-    Directory? dir = await getExternalStorageDirectory();
-
-    String newPath = "";
-    List<String> folders = dir!.path.split("/");
-    for (int x = 1; x < folders.length; x++) {
-      if (folders[x] != 'Android') {
-        newPath += "/" + folders[x];
-      } else {
-        break;
-      }
-    }
-    newPath = newPath + "/$_myDirectory";
-
-    return newPath;
-  }
 }

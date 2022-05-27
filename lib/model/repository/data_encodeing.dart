@@ -1,13 +1,21 @@
 import 'dart:convert';
+import 'dart:io';
 
 class DataEncoding {
-  String encode(String data) {
-    return base64.encode(utf8.encode(data));
+  static String encode(dynamic data) {
+    String encoded = json.encode(data);
+    final enCodedJson = utf8.encode(encoded);
+    final gZipJson = gzip.encode(enCodedJson);
+    String decodeData = base64.encode(gZipJson);
+    return decodeData;
   }
 
-  String decode(String old) {
+  static dynamic decode(String old) {
     try {
-      return utf8.decode(base64.decode(old));
+      final decodeBase64Json = base64.decode(old);
+      final decodeZipJson = gzip.decode(decodeBase64Json);
+      String originalJson = utf8.decode(decodeZipJson);
+      return json.decode(originalJson);
     } catch (err) {
       return "Wrong formatted";
     }

@@ -6,9 +6,10 @@ import '../../resources/styles_manager.dart';
 import 'widgets/add_box.dart';
 import 'widgets/old_entries.dart';
 
-class AddEntryView extends StatelessWidget {
-  const AddEntryView(this.entry, {Key? key}) : super(key: key);
-  final EntryModel? entry;
+class AddDealView extends StatelessWidget {
+  const AddDealView(this.isEntry, {this.deal, Key? key}) : super(key: key);
+  final Deal? deal;
+  final bool isEntry;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,8 @@ class AddEntryView extends StatelessWidget {
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
           appBar: AppBar(
-            title: const Text("Money Box"),
+            title: Text(
+                "${deal == null ? "Add" : "Edit"} ${isEntry ? "entry" : "order"}"),
             actions: [
               IconButton(
                   onPressed: () {
@@ -31,17 +33,17 @@ class AddEntryView extends StatelessWidget {
             child: ListView(
               physics: const BouncingScrollPhysics(),
               children: [
-                Text("Last Updated: ${DateTime.now().formatDate}",
+                Text("Date: ${DateTime.now().formatDate}",
                     style: Theme.of(context).textTheme.headline4),
                 const SizedBox(height: 10),
                 upperBox(context),
                 ...List.generate(2, (index) => divider()),
-                Text("Edit Money",
+                Text("Add Product",
                     style: Theme.of(context).textTheme.headline4),
                 divider(),
                 AddBox(),
                 ...List.generate(2, (index) => divider()),
-                Text("Old Edits", style: Theme.of(context).textTheme.headline4),
+                Text("Products", style: Theme.of(context).textTheme.headline4),
                 divider(),
                 OldEntryList(),
               ],

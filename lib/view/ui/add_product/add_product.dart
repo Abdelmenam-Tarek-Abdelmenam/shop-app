@@ -88,7 +88,8 @@ class _AddProductViewState extends State<AddProductView> {
                                 iconSize: 25,
                                 icon: const Icon(Icons.camera_alt_outlined),
                                 onPressed: () async {
-                                  img = await FileHandling().pickImage(context);
+                                  img = await ImageFileHandling()
+                                      .pickImage(context);
                                   setState(() {});
                                 },
                               ),

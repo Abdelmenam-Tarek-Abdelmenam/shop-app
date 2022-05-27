@@ -1,24 +1,18 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:shop/view/resources/routes_manger.dart';
 import 'package:shop/view/resources/theme_manager.dart';
 
-import 'bloc/my_bloc_observer.dart';
 import 'model/local/pref_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await PreferenceRepository.initializePreference();
-  return BlocOverrides.runZoned(
-    () async {
-      WidgetsFlutterBinding.ensureInitialized();
 
-      await PreferenceRepository.initializePreference();
-      runApp(const MyApp());
-    },
-    blocObserver: MyBlocObserver(),
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await PreferenceRepository.initializePreference();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
