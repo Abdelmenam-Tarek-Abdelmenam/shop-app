@@ -5,29 +5,29 @@ const String _myExtension = "men";
 const String _myFileName = "Shop_Data";
 
 class DbFileHandling {
-  Future<Database?> importDataBase(String path) async {
+  Future<Database?> importDataBase() async {
     FilePickerResult? value = await FilePicker.platform
         .pickFiles(type: FileType.custom, allowedExtensions: [_myExtension]);
     if (value != null && value.files.isNotEmpty) {
       final Uint8List bytes = value.files.first.bytes!;
-      File(path).writeAsBytes(bytes);
-      return openDatabase(path);
+      File(DataBaseRepository.instance.dataBasePath).writeAsBytes(bytes);
+      return openDatabase(DataBaseRepository.instance.dataBasePath);
     }
     return null;
   }
 
-  Future<void> exportDataBase(Database dataBase) async {
+  Future<void> exportDataBase() async {
     {
       if (await Permission.storage.request().isGranted) {
         String newPath = await _findPath();
         Directory dir = Directory(newPath);
         if (await dir.exists()) {
           File saveFile = File('$_myFileName.$_myExtension');
-          saveFile.copy(dataBase.path);
+          saveFile.copy(DataBaseRepository.instance.dataBasePath);
         } else {
           Directory(newPath).create().then((value) {
             File saveFile = File('$_myFileName.$_myExtension');
-            saveFile.copy(dataBase.path);
+            saveFile.copy(DataBaseRepository.instance.dataBasePath);
           });
         }
       } else {

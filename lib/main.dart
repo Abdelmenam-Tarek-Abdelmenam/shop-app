@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shop/view/resources/routes_manger.dart';
 import 'package:shop/view/resources/theme_manager.dart';
+import 'package:shop/view_model/app_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/view_model/deal_provider.dart';
+import 'package:shop/view_model/money_provider.dart';
+import 'package:shop/view_model/product_provider.dart';
+import 'package:shop/view_model/setting_provider.dart';
 
 import 'model/local/pref_repository.dart';
 
@@ -10,9 +16,15 @@ Future<void> main() async {
   await PreferenceRepository.initializePreference();
 
   WidgetsFlutterBinding.ensureInitialized();
-
   await PreferenceRepository.initializePreference();
-  runApp(const MyApp());
+
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => AppProvider()),
+    ChangeNotifierProvider(create: (_) => DealProvider()),
+    ChangeNotifierProvider(create: (_) => MoneyProvider()),
+    ChangeNotifierProvider(create: (_) => ProductProvider()),
+    ChangeNotifierProvider(create: (_) => SettingProvider()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

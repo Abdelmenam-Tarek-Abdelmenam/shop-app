@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shop/model/module/deals.dart';
+import 'package:shop/model/module/graph_data.dart';
 import 'package:shop/model/module/old_edit_money.dart';
 import 'package:shop/model/module/product.dart';
 import 'package:sqflite/sqflite.dart';
@@ -30,8 +31,8 @@ class DataBaseRepository {
     _initDataBase();
   }
 
-  set database(Database database) {
-    _database = database;
+  set database(Database? database) {
+    _database = database ?? _database;
   }
 
   Future<Product> getProduct(String id) async {
@@ -45,6 +46,10 @@ class DataBaseRepository {
     _ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.id} IN (${ids.join(',')})");
     return data.map((e) => Product.fromJson(e)).toList();
+  }
+
+  Future<GraphData> getGraphData() async {
+    return GraphData.empty();
   }
 
   Future<List<Product>> searchProducts(String search) async {
@@ -110,11 +115,10 @@ class DataBaseRepository {
     return Product.fromJson(data.first);
   }
 
-  Future<Product> getLessAmountProduct(int min) async {
+  Future<List<Product>> getLessAmountProduct(int min) async {
     _ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.amount} < $min");
-    if (data.isEmpty) return Product.empty();
-    return Product.fromJson(data.first);
+    return data.map((e) => Product.fromJson(e)).toList();
   }
 
   Future<void> editMoneyEdit(OldMoneyEdit oldEditMoney) async {
@@ -174,9 +178,9 @@ class DataBaseRepository {
     return data.map((e) => OldMoneyEdit.fromJson(e)).toList();
   }
 
-  Future<List<EntryModel>> getAllOrders() async {
+  Future<List<OrderModel>> getAllOrders() async {
     _ReturnedData data = await _database.query(OrderTable.tableName);
-    return data.map((e) => EntryModel.fromJson(e)).toList();
+    return data.map((e) => OrderModel.fromJson(e)).toList();
   }
 
   Future<void> _initDataBase() async {
