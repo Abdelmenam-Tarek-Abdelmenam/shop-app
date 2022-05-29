@@ -8,17 +8,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shop/model/module/deals.dart';
-import 'package:shop/model/module/graph_data.dart';
 import 'package:shop/model/module/old_edit_money.dart';
 import 'package:shop/model/module/product.dart';
 import 'package:sqflite/sqflite.dart';
+
+import '../module/ui_models.dart';
 
 part '../contstants/database_schema.dart';
 
 part 'files_handling.dart';
 
 const String _dataBasePath = "data.db";
-typedef _ReturnedData = List<Map<String, dynamic>>;
+typedef ReturnedData = List<Map<String, dynamic>>;
 
 class DataBaseRepository {
   static DataBaseRepository? _instance;
@@ -35,41 +36,97 @@ class DataBaseRepository {
     _database = database ?? _database;
   }
 
+  /// get products by id for deals
   Future<Product> getProduct(String id) async {
-    _ReturnedData data = await _database.query(ProductsTable.tableName,
+    ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.id} = ?", whereArgs: [id]);
     if (data.isEmpty) return Product.empty();
     return Product.fromJson(data.first);
   }
 
   Future<List<Product>> getProducts(List<String> ids) async {
-    _ReturnedData data = await _database.query(ProductsTable.tableName,
+    ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.id} IN (${ids.join(',')})");
     return data.map((e) => Product.fromJson(e)).toList();
   }
 
-  Future<GraphData> getGraphData() async {
-    return GraphData.empty();
+  /// get Data for showing in home screen
+  Future<GraphsData> getGraphData() async {
+    return GraphsData.empty();
   }
 
+  Future<ShowData<Product>> getSomeProducts(ShowData<Product> old) async {
+    old.maxNumber = await _countData(ProductsTable.tableName);
+    old.getNext();
+    ReturnedData maps = await _database.query(
+      ProductsTable.tableName,
+      limit: old.end,
+      offset: old.start,
+    );
+    old.data.addAll(maps.map((e) => Product.fromJson(e)).toList());
+    return old..isLoading = false;
+  }
+
+  Future<ShowData<EntryModel>> getSomeEntries(ShowData<EntryModel> old) async {
+    old.maxNumber = await _countData(EntryTable.tableName);
+    old.getNext();
+
+    ReturnedData maps = await _database.query(
+      EntryTable.tableName,
+      limit: old.end,
+      offset: old.start,
+    );
+    old.data.addAll(maps.map((e) => EntryModel.fromJson(e)).toList());
+    return old..isLoading = false;
+  }
+
+  Future<ShowData<OrderModel>> getSomeOrders(ShowData<OrderModel> old) async {
+    old.maxNumber = await _countData(OrderTable.tableName);
+    old.getNext();
+    ReturnedData maps = await _database.query(
+      OrderTable.tableName,
+      limit: old.end,
+      offset: old.start,
+    );
+    old.data.addAll(maps.map((e) => OrderModel.fromJson(e)).toList());
+    return old..isLoading = false;
+  }
+
+  Future<ShowData<OldMoneyEdit>> getSomeMoneyEdits(
+      ShowData<OldMoneyEdit> old) async {
+    old.maxNumber = await _countData(MoneyEditTable.tableName);
+    old.getNext();
+    ReturnedData maps = await _database.query(
+      MoneyEditTable.tableName,
+      limit: old.end,
+      offset: old.start,
+    );
+    old.data.addAll(maps.map((e) => OldMoneyEdit.fromJson(e)).toList());
+    return old..isLoading = false;
+  }
+
+  /// filter data
   Future<List<Product>> searchProducts(String search) async {
-    _ReturnedData data = await _database.query(ProductsTable.tableName,
+    ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.name} LIKE '%$search%'");
     return data.map((e) => Product.fromJson(e)).toList();
   }
 
   Future<List<EntryModel>> searchEntries(String search) async {
-    _ReturnedData data = await _database.query(EntryTable.tableName,
+    ReturnedData data = await _database.query(EntryTable.tableName,
         where: "${EntryTable.name} LIKE '%$search%'");
     return data.map((e) => EntryModel.fromJson(e)).toList();
   }
 
   Future<List<OrderModel>> searchOrders(String search) async {
-    _ReturnedData data = await _database.query(OrderTable.tableName,
+    ReturnedData data = await _database.query(OrderTable.tableName,
         where: "${OrderTable.name} LIKE '%$search%'");
     return data.map((e) => OrderModel.fromJson(e)).toList();
   }
 
+  /// money Box calculation
+
+  /// insert data to database
   Future<void> insertProduct(Product product) async {
     await _database.insert(
         ProductsTable.tableName, product.toJson.remove(ProductsTable));
@@ -90,6 +147,7 @@ class DataBaseRepository {
         oldEditMoney.toJson.remove(MoneyEditTable.id));
   }
 
+  /// edit data in database
   Future<void> editProduct(Product product) async {
     await _database.update(
         ProductsTable.tableName, product.toJson.remove(ProductsTable),
@@ -108,25 +166,46 @@ class DataBaseRepository {
         where: '${OrderTable.id} = ?', whereArgs: [order.id]);
   }
 
-  Future<Product> getZeroAmountProduct() async {
-    _ReturnedData data = await _database.query(ProductsTable.tableName,
-        where: "${ProductsTable.amount} = 0");
-    if (data.isEmpty) return Product.empty();
-    return Product.fromJson(data.first);
-  }
-
-  Future<List<Product>> getLessAmountProduct(int min) async {
-    _ReturnedData data = await _database.query(ProductsTable.tableName,
-        where: "${ProductsTable.amount} < $min");
-    return data.map((e) => Product.fromJson(e)).toList();
-  }
-
   Future<void> editMoneyEdit(OldMoneyEdit oldEditMoney) async {
     await _database.update(
         MoneyEditTable.tableName, oldEditMoney.toJson.remove(MoneyEditTable.id),
         where: '${MoneyEditTable.id} = ?', whereArgs: [oldEditMoney.id]);
   }
 
+  /// get reports data
+  Future<ReturnedData> getZeroAmountProduct() async {
+    ReturnedData data = await _database.query(ProductsTable.tableName,
+        where: "${ProductsTable.amount} = 0");
+    return data;
+  }
+
+  Future<ReturnedData> getLessAmountProduct(int min) async {
+    ReturnedData data = await _database.query(ProductsTable.tableName,
+        where: "${ProductsTable.amount} < $min");
+    return data;
+  }
+
+  Future<ReturnedData> getAllProducts() async {
+    ReturnedData data = await _database.query(ProductsTable.tableName);
+    return data;
+  }
+
+  Future<ReturnedData> getAllEntries() async {
+    ReturnedData data = await _database.query(EntryTable.tableName);
+    return data;
+  }
+
+  Future<ReturnedData> getAllMoneyEdits() async {
+    ReturnedData data = await _database.query(MoneyEditTable.tableName);
+    return data;
+  }
+
+  Future<ReturnedData> getAllOrders() async {
+    ReturnedData data = await _database.query(OrderTable.tableName);
+    return data;
+  }
+
+  /// delete data from database
   Future<void> deleteProduct(int id) async {
     await _database.delete(ProductsTable.tableName,
         where: "${ProductsTable.id} = ?", whereArgs: [id]);
@@ -163,24 +242,10 @@ class DataBaseRepository {
         where: "${MoneyEditTable.id} = ?", whereArgs: [id]);
   }
 
-  Future<List<Product>> getAllProducts() async {
-    _ReturnedData data = await _database.query(ProductsTable.tableName);
-    return data.map((e) => Product.fromJson(e)).toList();
-  }
-
-  Future<List<EntryModel>> getAllEntries() async {
-    _ReturnedData data = await _database.query(EntryTable.tableName);
-    return data.map((e) => EntryModel.fromJson(e)).toList();
-  }
-
-  Future<List<OldMoneyEdit>> getAllMoneyEdits() async {
-    _ReturnedData data = await _database.query(MoneyEditTable.tableName);
-    return data.map((e) => OldMoneyEdit.fromJson(e)).toList();
-  }
-
-  Future<List<OrderModel>> getAllOrders() async {
-    _ReturnedData data = await _database.query(OrderTable.tableName);
-    return data.map((e) => OrderModel.fromJson(e)).toList();
+  Future<int> _countData(String tableName) async {
+    ReturnedData value =
+        await _database.rawQuery("SELECT COUNT(*) FROM $tableName");
+    return value[0]['COUNT(*)'];
   }
 
   Future<void> _initDataBase() async {

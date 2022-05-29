@@ -48,8 +48,7 @@ class _MainViewState extends State<MainView> {
   List<Widget> getRightAction() {
     if (activeLayout > 0 && activeLayout < 4) {
       return [
-        IconButton(
-            onPressed: () {}, icon: const Icon(Icons.filter_alt_outlined)),
+        IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
         IconButton(
             onPressed: () {
               switch (activeLayout) {

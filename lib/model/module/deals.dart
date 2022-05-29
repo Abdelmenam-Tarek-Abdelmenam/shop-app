@@ -1,4 +1,8 @@
+// ignore_for_file: must_be_immutable
+
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:shop/model/module/product.dart';
 import 'package:shop/model/repository/database_repo.dart';
 
 class Deal {
@@ -22,8 +26,8 @@ class Deal {
       required this.time});
 }
 
-class DealProduct {
-  String id;
+class DealProduct extends Equatable {
+  int id;
   double amount;
   double price;
 
@@ -36,6 +40,27 @@ class DealProduct {
 
   Map<String, dynamic> get toJson =>
       {"id": id, "amount": amount, "price": price};
+
+  @override
+  List<Object?> get props => [id];
+}
+
+class DealAddProduct extends Equatable {
+  Product product;
+  double amount;
+  double price;
+
+  DealAddProduct(
+      {required this.product, required this.amount, required this.price});
+
+  Map<String, dynamic> get toJson =>
+      {"id": product.id, "amount": amount, "price": price};
+
+  DealProduct get toDealProduct =>
+      DealProduct(id: product.id, amount: amount, price: price);
+
+  @override
+  List<Object?> get props => [product.id];
 }
 
 class EntryModel extends Deal {

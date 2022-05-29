@@ -11,7 +11,7 @@ class OrderLayout extends StatelessWidget {
       date: '11-5-200',
       time: '11:20 AM',
       name: 'Abdelmenam Tarek',
-      items: [DealProduct(id: "id", amount: 5, price: 5)],
+      items: [DealProduct(id: 1, amount: 5, price: 5)],
       type: PaymentType.paid);
 
   @override

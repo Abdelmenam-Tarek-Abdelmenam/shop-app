@@ -17,22 +17,29 @@ class DbFileHandling {
   }
 
   Future<void> exportDataBase() async {
-    {
-      if (await Permission.storage.request().isGranted) {
-        String newPath = await _findPath();
-        Directory dir = Directory(newPath);
-        if (await dir.exists()) {
-          File saveFile = File('$_myFileName.$_myExtension');
-          saveFile.copy(DataBaseRepository.instance.dataBasePath);
-        } else {
-          Directory(newPath).create().then((value) {
-            File saveFile = File('$_myFileName.$_myExtension');
-            saveFile.copy(DataBaseRepository.instance.dataBasePath);
-          });
-        }
+    File file = await _getNewFile('$_myFileName.$_myExtension');
+    file.copy(DataBaseRepository.instance.dataBasePath);
+  }
+
+  Future<void> saveCsv(ReturnedData data, String name) async {
+    File file = await _getNewFile('$name${DateTime.now()}.csv');
+    file.copy(data.toString()); //TODO: Convert data to csv
+  }
+
+  Future<File> _getNewFile(String fileName) async {
+    if (await Permission.storage.request().isGranted) {
+      String newPath = await _findPath();
+      Directory dir = Directory(newPath);
+      if (await dir.exists()) {
+        File saveFile = File(fileName);
+        return saveFile;
       } else {
-        throw Exception('Permission Denied');
+        await Directory(newPath).create();
+        File saveFile = File(fileName);
+        return saveFile;
       }
+    } else {
+      throw Exception('Permission Denied');
     }
   }
 
