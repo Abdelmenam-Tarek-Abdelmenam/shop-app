@@ -92,7 +92,6 @@ PRIMARY KEY("id" AUTOINCREMENT)
 	"${OrderTable.name}"	TEXT,
 	"${OrderTable.type}"	INTEGER,
 	"${OrderTable.items}"	TEXT,
-	"${OrderTable.items}"	TEXT,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );''';
 

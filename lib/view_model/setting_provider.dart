@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shop/model/repository/database_repo.dart';
 import '../model/local/pref_repository.dart';
 
-import '../view/shared/functions/toast_helper.dart';
-
 class SettingProvider with ChangeNotifier {
   late int minimumAmount = PreferenceRepository.getDataFromSharedPreference(
-    key: PreferenceKey.minimumAmount,
-  );
+        key: PreferenceKey.minimumAmount,
+      ) ??
+      15;
 
   final DbFileHandling _fileHandling = DbFileHandling();
+
+  Future<void> clearDataBase() async {
+    EasyLoading.show(status: "Deleting database");
+    try {
+      await DataBaseRepository.instance.delete();
+      EasyLoading.showSuccess("Database deleted successfully");
+    } catch (err) {
+      EasyLoading.showError("An error accrued,Please try again");
+    }
+  }
+
+  void hidePrice() {
+    EasyLoading.showToast("Not yet");
+  }
 
   void changeMinimumAmount(int value) {
     minimumAmount = value;
@@ -21,84 +35,95 @@ class SettingProvider with ChangeNotifier {
   }
 
   Future<void> exportDataBase() async {
+    EasyLoading.show(status: 'preparing report');
     try {
       await _fileHandling.exportDataBase();
-      showToast("File saved successfully,check at you file manager ");
+      EasyLoading.showSuccess(
+          "File saved successfully,check at you file manager ");
     } catch (err) {
-      showToast("An error accrued,Please try again");
+      EasyLoading.showError("An error accrued,Please try again");
     }
   }
 
   Future<void> importDataBase() async {
     try {
+      EasyLoading.show(status: 'Reading file');
       DataBaseRepository.instance.database =
           await _fileHandling.importDataBase();
-      showToast("File read successfully");
+      EasyLoading.showSuccess("File read successfully");
     } catch (err) {
-      showToast("Ann error accrued,Please try again");
+      EasyLoading.showError("Ann error accrued,Please try again");
     }
   }
 
   void printZeroProduct() async {
+    EasyLoading.show(status: 'Preparing report');
     ReturnedData products =
         await DataBaseRepository.instance.getZeroAmountProduct();
     try {
       await _fileHandling.saveCsv(products, "Zero Product");
-      showToast("File saved successfully");
+      EasyLoading.showSuccess("File saved successfully");
     } catch (err) {
-      showToast("Ann error accrued,Please try again");
+      EasyLoading.showError("Ann error accrued,Please try again");
     }
   }
 
   void printLessProduct() async {
+    print(minimumAmount);
+    EasyLoading.show(status: 'Preparing report');
     ReturnedData products =
         await DataBaseRepository.instance.getLessAmountProduct(minimumAmount);
     try {
       await _fileHandling.saveCsv(products, "Less Product");
-      showToast("File saved successfully");
+      EasyLoading.showSuccess("File saved successfully");
     } catch (err) {
-      showToast("Ann error accrued,Please try again");
+      EasyLoading.showError("Ann error accrued,Please try again");
     }
   }
 
   void printAllProduct() async {
+    EasyLoading.show(status: 'Preparing report');
     ReturnedData products = await DataBaseRepository.instance.getAllProducts();
     try {
       await _fileHandling.saveCsv(products, "All Product");
-      showToast("File saved successfully");
+      EasyLoading.showSuccess("File saved successfully");
     } catch (err) {
-      showToast("Ann error accrued,Please try again");
+      EasyLoading.showError("Ann error accrued,Please try again");
     }
   }
 
   void printAllEntries() async {
+    EasyLoading.show(status: 'Preparing report');
     ReturnedData products = await DataBaseRepository.instance.getAllEntries();
     try {
       await _fileHandling.saveCsv(products, "All Entries");
-      showToast("File saved successfully");
+      EasyLoading.showSuccess("File saved successfully");
     } catch (err) {
-      showToast("Ann error accrued,Please try again");
+      EasyLoading.showError("Ann error accrued,Please try again");
     }
   }
 
   void printAllOrders() async {
     ReturnedData products = await DataBaseRepository.instance.getAllOrders();
+    EasyLoading.show(status: 'Preparing report');
     try {
       await _fileHandling.saveCsv(products, "All Orders");
-      showToast("File saved successfully");
+      EasyLoading.showSuccess("File saved successfully");
     } catch (err) {
-      showToast("Ann error accrued,Please try again");
+      EasyLoading.showError("Ann error accrued,Please try again");
     }
   }
 
   void printAllMoneyEdit() async {
+    EasyLoading.show(status: 'Preparing report');
+
     ReturnedData products =
         await DataBaseRepository.instance.getAllMoneyEdits();
     try {
       await _fileHandling.saveCsv(products, "All Money Edit");
-      showToast("File saved successfully");
+      EasyLoading.showSuccess("File saved successfully");
     } catch (err) {
-      showToast("Ann error accrued,Please try again");
+      EasyLoading.showError("Ann error accrued,Please try again");
     }
   }
 }

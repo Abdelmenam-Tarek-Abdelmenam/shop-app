@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/view/resources/styles_manager.dart';
+import 'package:shop/view_model/app_provider.dart';
 
 import '../../../../../resources/routes_manger.dart';
 
@@ -41,14 +43,20 @@ class MoneyCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.subtitle1,
                 ),
                 divider(),
-                Text(
-                  "850 EGP",
-                  style: Theme.of(context).textTheme.subtitle1,
+                Selector<AppProvider, int>(
+                  selector: (_, val) => val.moneyInBox,
+                  builder: (context, val, _) => Text(
+                    val == -1 ? '-' : "$val EGP",
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
                 ),
                 divider(),
-                Text(
-                  "Revenue 75 EGP",
-                  style: Theme.of(context).textTheme.subtitle2,
+                Selector<AppProvider, int>(
+                  selector: (_, val) => val.revenue,
+                  builder: (context, val, _) => Text(
+                    "Revenue ${val == -1 ? '-' : val} EGP",
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
                 ),
               ],
             ),
@@ -57,7 +65,13 @@ class MoneyCard extends StatelessWidget {
               children: [
                 Text("Orders", style: Theme.of(context).textTheme.subtitle1),
                 divider(),
-                Text("5", style: Theme.of(context).textTheme.subtitle1),
+                Selector<AppProvider, int>(
+                  selector: (_, val) => val.orders,
+                  builder: (context, val, _) => Text(
+                    val == -1 ? '-' : val.toString(),
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                ),
               ],
             ),
           ],

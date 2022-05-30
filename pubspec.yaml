@@ -31,7 +31,7 @@ dependencies:
   #styles
   flutter_native_splash: ^2.2.0+1
   google_fonts: ^2.3.3
-  fluttertoast: ^8.0.9
+  flutter_easyloading: ^3.0.5
   #widgets
   fl_chart: ^0.50.6
   google_nav_bar: ^5.0.6

@@ -2,15 +2,19 @@
 
 import 'package:equatable/equatable.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:shop/model/module/deals.dart';
 
 class GraphsData extends Equatable {
   List<int> money;
   List<int> orders;
 
+  List<int> get moneyGraph => money.isEmpty ? [0] : money;
+  List<int> get ordersGraph => orders.isEmpty ? [0] : orders;
+
   GraphsData({required this.money, required this.orders});
 
-  factory GraphsData.empty() => GraphsData(money: const [], orders: const []);
+  factory GraphsData.empty() => GraphsData(money: const [0], orders: const [0]);
 
   bool get isEmpty => money.isEmpty && orders.isEmpty;
 
@@ -69,6 +73,9 @@ class ShowData<T> extends Equatable {
     end = end + 20;
     if (end > maxNumber) end = maxNumber;
   }
+
+  Widget get lastItem =>
+      isEnd ? Container() : const Center(child: CircularProgressIndicator());
 
   @override
   List<Object?> get props => [start, end, isLoading];

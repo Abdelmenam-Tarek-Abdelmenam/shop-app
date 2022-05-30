@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:shop/model/repository/database_repo.dart';
 import 'package:shop/view/resources/routes_manger.dart';
 import 'package:shop/view/resources/theme_manager.dart';
 import 'package:shop/view_model/app_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/view_model/deal_provider.dart';
-import 'package:shop/view_model/money_provider.dart';
-import 'package:shop/view_model/product_provider.dart';
+import 'package:shop/view_model/layout_provider.dart';
 import 'package:shop/view_model/setting_provider.dart';
 
 import 'model/local/pref_repository.dart';
@@ -16,13 +16,15 @@ Future<void> main() async {
   await PreferenceRepository.initializePreference();
 
   WidgetsFlutterBinding.ensureInitialized();
+  DataBaseRepository.instance;
   await PreferenceRepository.initializePreference();
+  EasyLoading.instance
+    ..toastPosition = EasyLoadingToastPosition.bottom
+    ..displayDuration = const Duration(seconds: 1);
 
   runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => LayoutProvider()),
     ChangeNotifierProvider(create: (_) => AppProvider()),
-    ChangeNotifierProvider(create: (_) => DealProvider()),
-    ChangeNotifierProvider(create: (_) => MoneyProvider()),
-    ChangeNotifierProvider(create: (_) => ProductProvider()),
     ChangeNotifierProvider(create: (_) => SettingProvider()),
   ], child: const MyApp()));
 }
@@ -33,6 +35,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: EasyLoading.init(),
       title: 'Shop Cashier',
       debugShowCheckedModeBanner: false,
       theme: lightThemeData,

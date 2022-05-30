@@ -1,61 +1,57 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/model/module/product.dart';
 
+import '../../../../../model/module/ui_models.dart';
+import '../../../../../view_model/app_provider.dart';
 import '../../../../resources/styles_manager.dart';
 
 class ProductLayout extends StatelessWidget {
-  ProductLayout({Key? key}) : super(key: key);
-  final Product product = Product(
-    notes: '',
-    name: 'Laser Bag',
-    date: '11-9-2020',
-    amount: 10,
-    id: 2,
-    img: Uint8List(0),
-    realPrice: 10,
-    sellPrice: 12,
-  );
+  const ProductLayout({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: ListView(
-        physics: const BouncingScrollPhysics(),
-        children: [
-          Row(
-            children: [
-              Text("Total Products 10",
-                  style: Theme.of(context).textTheme.headline4),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: Divider(
-                  color: Theme.of(context).colorScheme.onBackground,
-                  // thickness: 10,
-                  height: 10,
+      child: Selector<AppProvider, ShowData<Product>>(
+        selector: (context, appProvider) => appProvider.productsShow,
+        builder: (context, entries, _) => ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            Row(
+              children: [
+                Text("Total Products ${entries.maxNumber}",
+                    style: Theme.of(context).textTheme.headline4),
+                const SizedBox(
+                  width: 10,
                 ),
-              ),
-            ],
-          ),
-          const Divider(
-            height: 10,
-            thickness: 0,
-          ),
-          GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemBuilder: (context, index) => listItem(context, product),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.9,
+                Expanded(
+                  child: Divider(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    // thickness: 10,
+                    height: 10,
+                  ),
+                ),
+              ],
             ),
-            itemCount: 10,
-          )
-        ],
+            const Divider(
+              height: 10,
+              thickness: 0,
+            ),
+            GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.9,
+              ),
+              itemBuilder: (context, index) => index == entries.maxNumber
+                  ? entries.lastItem
+                  : listItem(context, entries.data[index]),
+              itemCount: entries.data.length + 1,
+            )
+          ],
+        ),
       ),
     );
   }

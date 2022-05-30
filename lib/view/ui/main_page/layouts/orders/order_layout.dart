@@ -1,56 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../model/module/deals.dart';
+import '../../../../../model/module/ui_models.dart';
+import '../../../../../view_model/app_provider.dart';
 
 class OrderLayout extends StatelessWidget {
-  OrderLayout({Key? key}) : super(key: key);
-  final OrderModel orderModel = OrderModel(
-      id: 0,
-      profit: 100,
-      totalMoney: 120,
-      date: '11-5-200',
-      time: '11:20 AM',
-      name: 'Abdelmenam Tarek',
-      items: [DealProduct(id: 1, amount: 5, price: 5)],
-      type: PaymentType.paid);
+  const OrderLayout({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: ListView(
-        physics: const BouncingScrollPhysics(),
-        children: [
-          Row(
-            children: [
-              Text("Total Orders 10",
-                  style: Theme.of(context).textTheme.headline4),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: Divider(
-                  color: Theme.of(context).colorScheme.onBackground,
-                  // thickness: 10,
-                  height: 10,
+      child: Selector<AppProvider, ShowData<OrderModel>>(
+        selector: (context, appProvider) => appProvider.ordersShow,
+        builder: (context, entries, _) => ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            Row(
+              children: [
+                Text("Total Orders ${entries.maxNumber}",
+                    style: Theme.of(context).textTheme.headline4),
+                const SizedBox(
+                  width: 10,
                 ),
-              ),
-            ],
-          ),
-          const Divider(
-            height: 10,
-            thickness: 0,
-          ),
-          ListView.separated(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemBuilder: (context, index) => listItem(context, orderModel),
-            separatorBuilder: (_, __) => const SizedBox(
-              height: 5,
+                Expanded(
+                  child: Divider(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    // thickness: 10,
+                    height: 10,
+                  ),
+                ),
+              ],
             ),
-            itemCount: 10,
-          )
-        ],
+            const Divider(
+              height: 10,
+              thickness: 0,
+            ),
+            ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) => index == entries.maxNumber
+                  ? entries.lastItem
+                  : listItem(context, entries.data[index]),
+              separatorBuilder: (_, __) => const SizedBox(
+                height: 5,
+              ),
+              itemCount: entries.data.length + 1,
+            )
+          ],
+        ),
       ),
     );
   }

@@ -249,7 +249,8 @@ class DataBaseRepository {
   }
 
   Future<void> _initDataBase() async {
-    _database = await openDatabase(_dataBasePath, onCreate: _createDataBase);
+    _database = await openDatabase(_dataBasePath,
+        version: 1, onCreate: _createDataBase);
   }
 
   Future<void> _createDataBase(Database db, int _) async {
@@ -264,6 +265,5 @@ class DataBaseRepository {
     for (String name in _TablesSchema.allNames) {
       await _database.delete(name);
     }
-    await deleteDatabase(_dataBasePath);
   }
 }

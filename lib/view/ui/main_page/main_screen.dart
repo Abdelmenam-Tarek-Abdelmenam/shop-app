@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/view/ui/main_page/layouts/entry/entry_layout.dart';
 import 'package:shop/view/ui/main_page/layouts/home/home_layout.dart';
 import 'package:shop/view/ui/main_page/layouts/orders/order_layout.dart';
 import 'package:shop/view/ui/main_page/layouts/products/product_layout.dart';
 import 'package:shop/view/ui/main_page/layouts/setting/setting_layout.dart';
 
+import '../../../view_model/layout_provider.dart';
 import '../../resources/routes_manger.dart';
 
 const List<String> appBarTitles = [
@@ -16,39 +18,46 @@ const List<String> appBarTitles = [
   "Setting"
 ];
 
-class MainView extends StatefulWidget {
+class MainView extends StatelessWidget {
   const MainView({Key? key}) : super(key: key);
 
   @override
-  State<MainView> createState() => _MainViewState();
-}
-
-class _MainViewState extends State<MainView> {
-  int activeLayout = 0;
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 15,
-        title: Text(appBarTitles[activeLayout]),
-        actions: getRightAction(),
+    return Selector<LayoutProvider, int>(
+      selector: (_, val) => val.activeLayout,
+      builder: (context, value, child) => Scaffold(
+        appBar: AppBar(
+          titleSpacing: 15,
+          title: Text(appBarTitles[value]),
+          actions: getRightAction(value, context),
+        ),
+        bottomNavigationBar: bottomNavigationBar(value, context),
+        body: [
+          HomeLayout(),
+          const OrderLayout(),
+          const EntryLayout(),
+          const ProductLayout(),
+          const SettingLayout(),
+        ][value],
       ),
-      bottomNavigationBar: bottomNavigationBar(context),
-      body: [
-        HomeLayout(),
-        OrderLayout(),
-        EntryLayout(),
-        ProductLayout(),
-        const SettingLayout(),
-      ][activeLayout],
     );
   }
 
-  List<Widget> getRightAction() {
+  List<Widget> getRightAction(int activeLayout, BuildContext context) {
     if (activeLayout > 0 && activeLayout < 4) {
       return [
-        IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+        IconButton(
+            onPressed: () {
+              switch (activeLayout) {
+                case 1:
+                  break;
+                case 2:
+                  break;
+                case 3:
+                  break;
+              }
+            },
+            icon: const Icon(Icons.search)),
         IconButton(
             onPressed: () {
               switch (activeLayout) {
@@ -76,12 +85,10 @@ class _MainViewState extends State<MainView> {
     }
   }
 
-  Widget bottomNavigationBar(BuildContext context) => GNav(
+  Widget bottomNavigationBar(int activeLayout, BuildContext context) => GNav(
       selectedIndex: activeLayout,
       onTabChange: (newIndex) {
-        setState(() {
-          activeLayout = newIndex;
-        });
+        context.read<LayoutProvider>().changeActiveLayout = newIndex;
       },
       backgroundColor: Theme.of(context).colorScheme.onSecondary,
       duration: const Duration(milliseconds: 300),

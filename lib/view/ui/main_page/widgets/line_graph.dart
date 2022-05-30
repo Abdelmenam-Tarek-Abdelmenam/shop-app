@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -7,8 +5,18 @@ class LineGraph extends StatelessWidget {
   LineGraph(this.data, {Key? key}) : super(key: key);
 
   final List<int> data;
-  late final double maxData = data.reduce(max).toDouble();
+  late final double maxData = max(data).toDouble();
   late final int scale = (maxData ~/ 25) * 5;
+
+  int max(List<int> list) {
+    int max = 0;
+    for (int i = 0; i < list.length; i++) {
+      if (list[i] > max) {
+        max = list[i];
+      }
+    }
+    return max == 0 ? 100 : max;
+  }
 
   @override
   Widget build(BuildContext context) {

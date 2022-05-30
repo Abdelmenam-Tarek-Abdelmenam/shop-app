@@ -4,8 +4,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class NumericField extends StatelessWidget {
   final TextEditingController controller;
+  final Function(String value)? onChange;
   final String? title;
-  const NumericField(this.controller, {this.title, Key? key}) : super(key: key);
+  const NumericField(this.controller, {this.title, this.onChange, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +15,7 @@ class NumericField extends StatelessWidget {
       height: 40,
       child: TextFormField(
         controller: controller,
+        onChanged: (val) => onChange,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         validator: (value) {
@@ -41,6 +44,9 @@ class NumericField extends StatelessWidget {
                 int d = int.parse(controller.text);
                 if (d > 1) {
                   d--;
+                  if (onChange != null) {
+                    onChange!("$d");
+                  }
                   controller.text = "$d";
                 }
               },
@@ -54,6 +60,9 @@ class NumericField extends StatelessWidget {
               onPressed: () {
                 int d = int.parse(controller.text);
                 d++;
+                if (onChange != null) {
+                  onChange!("$d");
+                }
                 controller.text = "$d";
               },
             ),
