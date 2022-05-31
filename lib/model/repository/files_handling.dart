@@ -66,10 +66,6 @@ class ImageFileHandling {
     final XFile? image = await ImagePicker().pickImage(source: source);
     if (image == null) return null;
 
-    // String encoded = DataEncoding.encode(Uint8List);
-    // print("Encoded Image Length: ${encoded.length}");
-    // Uint8List.fromList(List<int>.from(DataEncoding.decode(encoded)));
-
     return compressImage(image);
   }
 

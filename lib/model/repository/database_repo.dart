@@ -28,10 +28,6 @@ class DataBaseRepository {
   late Database _database;
   String get dataBasePath => _database.path;
 
-  DataBaseRepository() {
-    _initDataBase();
-  }
-
   set database(Database? database) {
     _database = database ?? _database;
   }
@@ -58,13 +54,14 @@ class DataBaseRepository {
   Future<ShowData<Product>> getSomeProducts(ShowData<Product> old) async {
     old.maxNumber = await _countData(ProductsTable.tableName);
     old.getNext();
+
     ReturnedData maps = await _database.query(
       ProductsTable.tableName,
       limit: old.end,
       offset: old.start,
     );
-    old.data.addAll(maps.map((e) => Product.fromJson(e)).toList());
-    return old..isLoading = false;
+    old.data = (maps.map((e) => Product.fromJson(e)).toList());
+    return old;
   }
 
   Future<ShowData<EntryModel>> getSomeEntries(ShowData<EntryModel> old) async {
@@ -77,7 +74,7 @@ class DataBaseRepository {
       offset: old.start,
     );
     old.data.addAll(maps.map((e) => EntryModel.fromJson(e)).toList());
-    return old..isLoading = false;
+    return old;
   }
 
   Future<ShowData<OrderModel>> getSomeOrders(ShowData<OrderModel> old) async {
@@ -89,7 +86,7 @@ class DataBaseRepository {
       offset: old.start,
     );
     old.data.addAll(maps.map((e) => OrderModel.fromJson(e)).toList());
-    return old..isLoading = false;
+    return old;
   }
 
   Future<ShowData<OldMoneyEdit>> getSomeMoneyEdits(
@@ -102,7 +99,7 @@ class DataBaseRepository {
       offset: old.start,
     );
     old.data.addAll(maps.map((e) => OldMoneyEdit.fromJson(e)).toList());
-    return old..isLoading = false;
+    return old;
   }
 
   /// filter data
@@ -128,8 +125,9 @@ class DataBaseRepository {
 
   /// insert data to database
   Future<void> insertProduct(Product product) async {
-    await _database.insert(
-        ProductsTable.tableName, product.toJson.remove(ProductsTable));
+    Map<String, dynamic> map = product.toJson;
+    map.remove(ProductsTable.id);
+    await _database.insert(ProductsTable.tableName, map);
   }
 
   Future<void> insertEntry(EntryModel entry) async {
@@ -149,8 +147,9 @@ class DataBaseRepository {
 
   /// edit data in database
   Future<void> editProduct(Product product) async {
-    await _database.update(
-        ProductsTable.tableName, product.toJson.remove(ProductsTable),
+    Map<String, dynamic> map = product.toJson;
+    map.remove(ProductsTable.id);
+    await _database.update(ProductsTable.tableName, map,
         where: '${ProductsTable.id} = ?', whereArgs: [product.id]);
   }
 
@@ -248,7 +247,7 @@ class DataBaseRepository {
     return value[0]['COUNT(*)'];
   }
 
-  Future<void> _initDataBase() async {
+  Future<void> initializeDatabase() async {
     _database = await openDatabase(_dataBasePath,
         version: 1, onCreate: _createDataBase);
   }

@@ -37,6 +37,9 @@ class DefaultFormField extends StatelessWidget {
         keyboardType: keyboardType,
         validator: validator,
         decoration: InputDecoration(
+          errorStyle: const TextStyle(fontSize: 12),
+          errorBorder: InputBorder.none,
+          border: InputBorder.none,
           enabledBorder: border
               ? OutlineInputBorder(
                   borderSide: BorderSide(

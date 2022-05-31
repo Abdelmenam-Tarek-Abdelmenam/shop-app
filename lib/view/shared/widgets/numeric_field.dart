@@ -22,13 +22,16 @@ class NumericField extends StatelessWidget {
           if (value!.isEmpty) {
             return "cannot be empty";
           } else {
-            int isDigitsOnly = int.tryParse(value) ?? 0;
+            double isDigitsOnly = double.tryParse(value) ?? 0;
             return isDigitsOnly == 0 ? 'Integer only' : null;
           }
         },
         textAlign: TextAlign.center,
         decoration: InputDecoration(
             labelText: title,
+            errorStyle: const TextStyle(fontSize: 12),
+            errorBorder: InputBorder.none,
+            border: InputBorder.none,
             labelStyle: const TextStyle(
               fontSize: 16,
               color: Colors.grey,
@@ -41,7 +44,7 @@ class NumericField extends StatelessWidget {
                 color: Colors.grey.withOpacity(0.5),
               ),
               onPressed: () {
-                int d = int.parse(controller.text);
+                double d = double.parse(controller.text);
                 if (d > 1) {
                   d--;
                   if (onChange != null) {
@@ -58,7 +61,7 @@ class NumericField extends StatelessWidget {
                 color: Colors.grey.withOpacity(0.5),
               ),
               onPressed: () {
-                int d = int.parse(controller.text);
+                double d = double.parse(controller.text);
                 d++;
                 if (onChange != null) {
                   onChange!("$d");

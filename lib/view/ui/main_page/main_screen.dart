@@ -9,6 +9,7 @@ import 'package:shop/view/ui/main_page/layouts/setting/setting_layout.dart';
 
 import '../../../view_model/layout_provider.dart';
 import '../../resources/routes_manger.dart';
+import '../add_product/add_product.dart';
 
 const List<String> appBarTitles = [
   "Home",
@@ -68,7 +69,8 @@ class MainView extends StatelessWidget {
                   Navigator.pushNamed(context, Routes.addEntryRoute);
                   break;
                 case 3:
-                  Navigator.pushNamed(context, Routes.addProductRoute);
+                  Navigator.pushNamed(context, Routes.addProductRoute,
+                      arguments: AddProductArgument.empty());
                   break;
               }
             },

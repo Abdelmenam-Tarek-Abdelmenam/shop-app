@@ -56,21 +56,25 @@ class ShowData<T> extends Equatable {
   int start = 0;
   int end = 20;
   int maxNumber;
-  bool isLoading = false;
 
   ShowData({
     required this.data,
     required this.maxNumber,
   });
 
-  factory ShowData.empty() => ShowData(data: const [], maxNumber: 0);
+  void addData(T newData) {
+    data.insert(0, newData);
+  }
+
+  // ignore: prefer_const_literals_to_create_immutables
+  factory ShowData.empty() => ShowData(data: [], maxNumber: 0);
 
   bool get isEmpty => data.isEmpty;
   bool get isEnd => (start + data.length) == maxNumber;
 
   void getNext() {
     end = start + data.length;
-    end = end + 20;
+    end = end + 10;
     if (end > maxNumber) end = maxNumber;
   }
 
@@ -78,5 +82,5 @@ class ShowData<T> extends Equatable {
       isEnd ? Container() : const Center(child: CircularProgressIndicator());
 
   @override
-  List<Object?> get props => [start, end, isLoading];
+  List<Object?> get props => [data.length];
 }

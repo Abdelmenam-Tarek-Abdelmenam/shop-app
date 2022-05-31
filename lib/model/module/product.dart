@@ -2,15 +2,16 @@ import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
 
+import '../repository/data_encodeing.dart';
 import '../repository/database_repo.dart';
 
 // ignore: must_be_immutable
 class Product extends Equatable {
   int id;
   String date;
-  Uint8List img; //TODO: CORRECT TYPE
+  Uint8List? img;
   String name;
-  String notes;
+  String? notes;
   double amount;
   double realPrice;
   double sellPrice;
@@ -33,19 +34,23 @@ class Product extends Equatable {
         ProductsTable.sellPrice: sellPrice,
         ProductsTable.realPrice: realPrice,
         ProductsTable.amount: amount,
-        ProductsTable.img: img,
+        ProductsTable.img: DataEncoding.encode(img),
       };
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    List? imgData = DataEncoding.decode(json[ProductsTable.img]);
+    Uint8List? _imgBytes =
+        imgData == null ? null : Uint8List.fromList(List<int>.from((imgData)));
+
     return Product(
         notes: json[ProductsTable.notes],
         name: json[ProductsTable.name],
         date: json[ProductsTable.date],
-        amount: json[ProductsTable.amount],
+        amount: json[ProductsTable.amount].toDouble(),
         id: json[ProductsTable.id],
-        img: json[ProductsTable.img],
-        realPrice: json[ProductsTable.realPrice],
-        sellPrice: json[ProductsTable.sellPrice]);
+        img: _imgBytes,
+        realPrice: json[ProductsTable.realPrice].toDouble(),
+        sellPrice: json[ProductsTable.sellPrice].toDouble());
   }
 
   factory Product.empty() {
@@ -55,10 +60,12 @@ class Product extends Equatable {
         date: '',
         amount: 0,
         id: 0,
-        img: Uint8List(0),
+        img: null,
         realPrice: 0,
         sellPrice: 0);
   }
+
+  bool get check => sellPrice < realPrice;
 
   @override
   List<Object?> get props => [id];

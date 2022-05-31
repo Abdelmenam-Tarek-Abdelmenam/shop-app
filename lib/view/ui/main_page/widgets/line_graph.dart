@@ -6,7 +6,7 @@ class LineGraph extends StatelessWidget {
 
   final List<int> data;
   late final double maxData = max(data).toDouble();
-  late final int scale = (maxData ~/ 25) * 5;
+  late final int scale = ((maxData ~/ 25) * 5) + 1;
 
   int max(List<int> list) {
     int max = 0;

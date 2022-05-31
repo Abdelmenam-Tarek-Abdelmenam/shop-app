@@ -13,10 +13,8 @@ import 'model/local/pref_repository.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await PreferenceRepository.initializePreference();
-
   WidgetsFlutterBinding.ensureInitialized();
-  DataBaseRepository.instance;
+  await DataBaseRepository.instance.initializeDatabase();
   await PreferenceRepository.initializePreference();
   EasyLoading.instance
     ..toastPosition = EasyLoadingToastPosition.bottom
@@ -24,7 +22,7 @@ Future<void> main() async {
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => LayoutProvider()),
-    ChangeNotifierProvider(create: (_) => AppProvider()),
+    ChangeNotifierProvider(create: (_) => AppProvider()..startApp()),
     ChangeNotifierProvider(create: (_) => SettingProvider()),
   ], child: const MyApp()));
 }

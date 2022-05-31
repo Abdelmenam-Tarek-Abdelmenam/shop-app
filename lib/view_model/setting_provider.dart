@@ -69,7 +69,6 @@ class SettingProvider with ChangeNotifier {
   }
 
   void printLessProduct() async {
-    print(minimumAmount);
     EasyLoading.show(status: 'Preparing report');
     ReturnedData products =
         await DataBaseRepository.instance.getLessAmountProduct(minimumAmount);
