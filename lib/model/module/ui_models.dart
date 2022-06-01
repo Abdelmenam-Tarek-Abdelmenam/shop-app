@@ -53,7 +53,6 @@ class DealsData extends Equatable {
 
 class ShowData<T> extends Equatable {
   List<T> data;
-  int start = 0;
   int end = 20;
   int maxNumber;
 
@@ -70,10 +69,10 @@ class ShowData<T> extends Equatable {
   factory ShowData.empty() => ShowData(data: [], maxNumber: 0);
 
   bool get isEmpty => data.isEmpty;
-  bool get isEnd => (start + data.length) == maxNumber;
+  bool get isEnd => (data.length) == maxNumber;
 
   void getNext() {
-    end = start + data.length;
+    end = data.length;
     end = end + 10;
     if (end > maxNumber) end = maxNumber;
   }

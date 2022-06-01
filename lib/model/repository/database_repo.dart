@@ -58,9 +58,10 @@ class DataBaseRepository {
     ReturnedData maps = await _database.query(
       ProductsTable.tableName,
       limit: old.end,
-      offset: old.start,
+      offset: old.maxNumber - old.end,
     );
-    old.data = (maps.map((e) => Product.fromJson(e)).toList());
+    old.data =
+        (maps.map((e) => Product.fromJson(e)).toList().reversed.toList());
     return old;
   }
 
@@ -71,7 +72,7 @@ class DataBaseRepository {
     ReturnedData maps = await _database.query(
       EntryTable.tableName,
       limit: old.end,
-      offset: old.start,
+      offset: old.maxNumber - old.end,
     );
     old.data.addAll(maps.map((e) => EntryModel.fromJson(e)).toList());
     return old;
@@ -83,7 +84,7 @@ class DataBaseRepository {
     ReturnedData maps = await _database.query(
       OrderTable.tableName,
       limit: old.end,
-      offset: old.start,
+      offset: old.maxNumber - old.end,
     );
     old.data.addAll(maps.map((e) => OrderModel.fromJson(e)).toList());
     return old;
@@ -96,9 +97,10 @@ class DataBaseRepository {
     ReturnedData maps = await _database.query(
       MoneyEditTable.tableName,
       limit: old.end,
-      offset: old.start,
+      offset: old.maxNumber - old.end,
     );
-    old.data.addAll(maps.map((e) => OldMoneyEdit.fromJson(e)).toList());
+    old.data
+        .addAll(maps.map((e) => OldMoneyEdit.fromJson(e)).toList().reversed);
     return old;
   }
 

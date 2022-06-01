@@ -17,7 +17,10 @@ class ProductLayout extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Selector<AppProvider, ShowData<Product>>(
-        shouldRebuild: (_, val) => true,
+        shouldRebuild: (_, val) {
+          if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+          return true;
+        },
         selector: (context, appProvider) => appProvider.productsShow,
         builder: (context, entries, _) {
           return NotificationListener<ScrollEndNotification>(
@@ -74,15 +77,15 @@ class ProductLayout extends StatelessWidget {
     );
   }
 
-  Widget listItem(BuildContext context, Product item, int index) => InkWell(
-        onTap: () => Navigator.of(context).pushNamed(Routes.addProductRoute,
-            arguments: AddProductArgument(item, index)),
-        child: Container(
-          margin: const EdgeInsets.all(5.0),
-          decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSecondary,
-              borderRadius: StyleManager.border,
-              boxShadow: StyleManager.shadow),
+  Widget listItem(BuildContext context, Product item, int index) => Container(
+        margin: const EdgeInsets.all(5.0),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onSecondary,
+            borderRadius: StyleManager.border,
+            boxShadow: StyleManager.shadow),
+        child: InkWell(
+          onTap: () => Navigator.of(context).pushNamed(Routes.addProductRoute,
+              arguments: AddProductArgument(item, index)),
           child: LayoutBuilder(
             builder: (context, constraints) => Stack(
               children: [

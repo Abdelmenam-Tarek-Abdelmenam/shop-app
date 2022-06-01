@@ -11,6 +11,7 @@ import 'package:shop/view_model/app_provider.dart';
 
 import '../../../model/module/product.dart';
 import '../../resources/styles_manager.dart';
+import '../../shared/functions/dialog.dart';
 
 class AddProductArgument {
   final Product? product;
@@ -73,6 +74,17 @@ class AddProductView extends StatelessWidget {
           ),
           appBar: AppBar(
             title: Text("${arg.product == null ? "Add" : "Edit"} Product"),
+            actions:arg.product == null ? null : [
+              IconButton(
+                icon: const Icon(Icons.delete_outline),
+                onPressed: () async {
+                   if(await chooseDialog(context, title : "Delete Product",
+                      content : "Are you sure you want to delete this product?")){
+                     await context.read<AppProvider>().deleteProduct(arg.product!,arg.index!);
+                   }
+                },
+              )
+            ],
           ),
           body: Padding(
             padding: const EdgeInsets.all(10.0),

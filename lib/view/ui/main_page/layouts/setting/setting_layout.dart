@@ -4,6 +4,7 @@ import 'package:shop/view/shared/widgets/numeric_field.dart';
 import 'package:shop/view_model/setting_provider.dart';
 
 import '../../../../resources/styles_manager.dart';
+import '../../../../shared/functions/dialog.dart';
 
 class SettingLayout extends StatelessWidget {
   const SettingLayout({Key? key}) : super(key: key);
@@ -63,8 +64,13 @@ class SettingLayout extends StatelessWidget {
             _button(context, 'Export database',
                 () => settingProvider(context).exportDataBase()),
             _divider(context),
-            _button(context, 'Clear database',
-                () => settingProvider(context).clearDataBase()),
+            _button(context, 'Clear database', () async {
+              if (await chooseDialog(context,
+                  title: "Delete Product",
+                  content: "Are you sure you want to delete this product?")) {
+                return settingProvider(context).clearDataBase();
+              }
+            }),
           ],
         ),
       );

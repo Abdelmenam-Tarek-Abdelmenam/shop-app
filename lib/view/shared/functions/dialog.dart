@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 Future<bool> chooseDialog(BuildContext context,
-    {title, content, yes, no}) async {
+    {String? title,String? content,String? yes,String? no}) async {
   return (await showDialog(
         context: context,
         builder: (context) => AlertDialog(

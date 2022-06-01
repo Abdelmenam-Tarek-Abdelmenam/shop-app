@@ -72,6 +72,20 @@ class AppProvider with ChangeNotifier {
     }
   }
 
+  Future<void> deleteProduct(Product product, int index) async {
+    EasyLoading.show(status: "Deleting product");
+    try {
+      await DataBaseRepository.instance.deleteProduct(product.id);
+      productsShow.data.removeAt(index);
+      EasyLoading.showSuccess('Product deleted successfully');
+      notifyListeners();
+    } catch (err, stack) {
+      print(err);
+      print(stack);
+      EasyLoading.showError("An error happened while add product");
+    }
+  }
+
   void getEntries() {
     if (entriesShow.isEnd) return;
     notifyListeners();
