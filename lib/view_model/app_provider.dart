@@ -11,14 +11,15 @@ class AppProvider with ChangeNotifier {
   ShowData<Product> productsShow = ShowData.empty();
   ShowData<EntryModel> entriesShow = ShowData.empty();
   ShowData<OrderModel> ordersShow = ShowData.empty();
-  double moneyInBox = -1;
-  int revenue = -1;
-  int orders = -1;
-  int entries = -1;
+  double moneyInBox = 300;
+  int revenue = 50;
+  int orders = 7;
+  int entries = 2;
 
   Future<void> startApp() async {
     graphData = await DataBaseRepository.instance.getGraphData();
-    graphData.orders = [1, 2, 3];
+    graphData.orders = [4, 5, 7, 2, 1, 4, 8, 0, 4];
+    graphData.money = [450, 300, 210, 400, 100, 770, 540, 0, 430];
     productsShow =
         await DataBaseRepository.instance.getSomeProducts(productsShow);
 
@@ -28,19 +29,64 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> readMoreProducts() async {
-    if (productsShow.isEnd) return;
-
-    await DataBaseRepository.instance
-        .getSomeProducts(productsShow)
-        .then((value) {
-      productsShow = value;
+  /// money box
+  Future<void> addMoneyEdit(OldMoneyEdit edit) async {
+    EasyLoading.show(status: "Adding money edit");
+    try {
+      await DataBaseRepository.instance.insertMoneyEdit(edit);
+      EasyLoading.showSuccess('Money edit added successfully');
+      if (edit.type == EditType.add) {
+        moneyInBox += edit.amount;
+      } else {
+        moneyInBox -= edit.amount;
+      }
       notifyListeners();
-    }).catchError((err) {
-      EasyLoading.showError("An error happened while reading more products");
-    });
+    } catch (err) {
+      EasyLoading.showError("An error happened while add money edit");
+    }
   }
 
+  Future<List<OldMoneyEdit>> readAllMoneyEdits() async {
+    return await DataBaseRepository.instance.getMoneyEdits();
+  }
+
+  /// entries
+  Future<void> addEntry(EntryModel entry) async {
+    EasyLoading.show(status: "Adding entry");
+    try {
+      DataBaseRepository.instance.insertEntry(entry);
+      for (DealProduct item in entry.items) {
+        await DataBaseRepository.instance.editProductDeal(item, true);
+      }
+      entriesShow.addData(entry);
+      entriesShow.maxNumber++;
+      moneyInBox -= entry.totalPrice;
+      EasyLoading.showSuccess('Entry added successfully');
+      notifyListeners();
+    } catch (err) {
+      EasyLoading.showError("An error happened while add entry");
+    }
+  }
+
+  /// orders
+  Future<void> addOrder(OrderModel order) async {
+    EasyLoading.show(status: "Adding order");
+    try {
+      DataBaseRepository.instance.insertOrder(order);
+      for (DealProduct item in order.items) {
+        await DataBaseRepository.instance.editProductDeal(item, false);
+      }
+      ordersShow.addData(order);
+      ordersShow.maxNumber++;
+      moneyInBox += order.totalPrice;
+      EasyLoading.showSuccess('Order added successfully');
+      notifyListeners();
+    } catch (err) {
+      EasyLoading.showError("An error happened while add order");
+    }
+  }
+
+  /// Products
   Future<void> addProduct(Product product) async {
     EasyLoading.show(status: "Adding product");
     if (product.check) {
@@ -92,52 +138,45 @@ class AppProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addMoneyEdit(OldMoneyEdit edit) async {
-    EasyLoading.show(status: "Adding money edit");
-    try {
-      await DataBaseRepository.instance.insertMoneyEdit(edit);
-      EasyLoading.showSuccess('Money edit added successfully');
-      if (edit.type == EditType.add) {
-        moneyInBox += edit.amount;
-      } else {
-        moneyInBox -= edit.amount;
-      }
+  /// ListView Infinite scroll
+  Future<void> readMoreProducts() async {
+    if (productsShow.isEnd) return;
+
+    await DataBaseRepository.instance
+        .getSomeProducts(productsShow)
+        .then((value) {
+      productsShow = value;
       notifyListeners();
-    } catch (err) {
-      EasyLoading.showError("An error happened while add money edit");
-    }
+    }).catchError((err) {
+      EasyLoading.showError("An error happened while reading more products");
+    });
   }
 
-  Future<List<OldMoneyEdit>> readAllMoneyEdits() async {
-    return await DataBaseRepository.instance.getMoneyEdits();
+  Future<void> readMoreEntries() async {
+    if (entriesShow.isEnd) return;
+    await DataBaseRepository.instance.getSomeEntries(entriesShow).then((value) {
+      entriesShow = value;
+      notifyListeners();
+    }).catchError((err) {
+      EasyLoading.showError("An error happened while reading more Entries");
+    });
+  }
+
+  Future<void> readMoreOrders() async {
+    if (ordersShow.isEnd) return;
+    await DataBaseRepository.instance.getSomeOrders(ordersShow).then((value) {
+      ordersShow = value;
+      notifyListeners();
+    }).catchError((err) {
+      EasyLoading.showError("An error happened while reading more Entries");
+    });
   }
 
   /// till here
-  void getEntries() {
-    if (entriesShow.isEnd) return;
-    notifyListeners();
-    DataBaseRepository.instance.getSomeEntries(entriesShow).then((value) {
-      entriesShow = value;
-      notifyListeners();
-    });
-  }
 
-  void getOrders() {
-    if (ordersShow.isEnd) return;
-    notifyListeners();
-    DataBaseRepository.instance.getSomeOrders(ordersShow).then((value) {
-      ordersShow = value;
-      notifyListeners();
-    });
-  }
-
-  void getMoneyInBox() {
+  void getInitialValues() {
     if (moneyInBox != -1) return;
     moneyInBox = 0;
     notifyListeners();
   }
-
-  void calculateRevenue() {}
-
-  void calculateOrders() {}
 }

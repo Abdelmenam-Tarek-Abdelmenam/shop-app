@@ -1,33 +1,24 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 
+import '../../../../model/module/deals.dart';
 import '../../../../model/module/product.dart';
 
-class OldEntryList extends StatelessWidget {
-  OldEntryList({Key? key}) : super(key: key);
+class ProductsList extends StatelessWidget {
+  const ProductsList(this.products, {Key? key}) : super(key: key);
 
-  final Product product = Product(
-    notes: '',
-    name: 'Laser Bag',
-    date: '11-9-2020',
-    amount: 10,
-    id: 2,
-    img: Uint8List(0),
-    realPrice: 10,
-    sellPrice: 12,
-  );
+  final List<DealAddProduct> products;
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) => listItem(context, product),
+      itemBuilder: (context, index) =>
+          listItem(context, products[index].product),
       separatorBuilder: (_, __) => const SizedBox(
         height: 5,
       ),
-      itemCount: 10,
+      itemCount: products.length,
     );
   }
 

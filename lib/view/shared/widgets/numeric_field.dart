@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class NumericField extends StatelessWidget {
@@ -17,7 +16,7 @@ class NumericField extends StatelessWidget {
         controller: controller,
         onChanged: (val) => onChange,
         keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         validator: (value) {
           if (value!.isEmpty) {
             return "cannot be empty";

@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:shop/model/module/product.dart';
 import 'package:shop/model/repository/database_repo.dart';
+import 'package:shop/model/repository/dates_repository.dart';
 
 class Deal {
   int id;
@@ -94,6 +95,22 @@ class EntryModel extends Deal {
         totalMoney: json[EntryTable.totalMoney]);
   }
 
+  factory EntryModel.empty() {
+    return EntryModel(
+      id: 0,
+      type: PaymentType.paid,
+      items: [],
+      date: DateTime.now().formatDate,
+      name: '',
+      time: TimeOfDay.now().toString(),
+      totalMoney: 0,
+    );
+  }
+
+  bool get isEmpty => id == 0;
+  double get totalPrice =>
+      items.fold(0, (sum, item) => sum + item.price * item.amount);
+
   Map<String, dynamic> get toJson => {
         EntryTable.id: id,
         EntryTable.items: items.map((e) => e.toJson).toList(),
@@ -125,6 +142,9 @@ class OrderModel extends Deal {
             type: type,
             time: time,
             totalMoney: totalMoney);
+
+  double get totalPrice =>
+      items.fold(0, (sum, item) => sum + item.price * item.amount);
 
   Map<String, dynamic> get toJson => {
         OrderTable.id: id,

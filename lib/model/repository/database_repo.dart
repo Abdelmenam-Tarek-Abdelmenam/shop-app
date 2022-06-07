@@ -29,14 +29,14 @@ class DataBaseRepository {
   late Database _database;
 
   /// get products by id for deals
-  Future<Product> getProduct(String id) async {
+  Future<Product> getProduct(int id) async {
     ReturnedData data = await _database.query(ProductsTable.tableName,
-        where: "${ProductsTable.id} = ?", whereArgs: [id]);
+        where: "${ProductsTable.id} = $id");
     if (data.isEmpty) return Product.empty();
     return Product.fromJson(data.first);
   }
 
-  Future<List<Product>> getProducts(List<String> ids) async {
+  Future<List<Product>> getProducts(List<int> ids) async {
     ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.id} IN (${ids.join(',')})");
     return data.map((e) => Product.fromJson(e)).toList();
@@ -151,7 +151,18 @@ class DataBaseRepository {
   Future<void> editEntry(EntryModel entry) async {
     await _database.update(
         EntryTable.tableName, entry.toJson.remove(EntryTable.id),
-        where: '${EntryTable.id} = ?', whereArgs: [entry.id]);
+        where: '${EntryTable.id} = ${entry.id}');
+  }
+
+  Future<void> editProductDeal(DealProduct product, bool isEntry) async {
+    Product raw = await getProduct(product.id);
+    if (isEntry) {
+      raw.amount += product.amount;
+      raw.realPrice = product.price;
+    } else {
+      raw.amount -= product.amount;
+    }
+    await editProduct(raw);
   }
 
   Future<void> editOrder(OrderModel order) async {
