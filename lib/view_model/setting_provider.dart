@@ -40,7 +40,9 @@ class SettingProvider with ChangeNotifier {
       await _fileHandling.exportDataBase();
       EasyLoading.showSuccess(
           "File saved successfully,check at you file manager ");
-    } catch (err) {
+    } catch (err, stack) {
+      print(err);
+      print(stack);
       EasyLoading.showError("An error accrued,Please try again");
     }
   }
@@ -48,10 +50,15 @@ class SettingProvider with ChangeNotifier {
   Future<void> importDataBase() async {
     try {
       EasyLoading.show(status: 'Reading file');
-      DataBaseRepository.instance.database =
-          await _fileHandling.importDataBase();
-      EasyLoading.showSuccess("File read successfully");
-    } catch (err) {
+      bool temp = await _fileHandling.importDataBase();
+      if (temp) {
+        EasyLoading.showSuccess("File imported successfully");
+      } else {
+        EasyLoading.showError("File is not valid");
+      }
+    } catch (err, stack) {
+      print(err);
+      print(stack);
       EasyLoading.showError("Ann error accrued,Please try again");
     }
   }

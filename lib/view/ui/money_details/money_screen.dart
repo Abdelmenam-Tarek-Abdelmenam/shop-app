@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/view/resources/styles_manager.dart';
 import 'package:shop/view/ui/money_details/widgets/edit_box.dart';
 import 'package:shop/view/ui/money_details/widgets/old_edits.dart';
+import 'package:shop/view_model/app_provider.dart';
 
 class MoneyDetailsView extends StatelessWidget {
   MoneyDetailsView({Key? key}) : super(key: key);
@@ -31,7 +33,7 @@ class MoneyDetailsView extends StatelessWidget {
                 ...List.generate(2, (index) => divider()),
                 Text("Old Edits", style: Theme.of(context).textTheme.headline4),
                 divider(),
-                OldEditList(),
+                const OldEditList(),
               ],
             ),
           )),
@@ -57,27 +59,42 @@ class MoneyDetailsView extends StatelessWidget {
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                   divider(),
-                  Text(
-                    "850 EGP",
-                    style: Theme.of(context).textTheme.subtitle1,
+                  Selector<AppProvider, double>(
+                    selector: (_, val) => val.moneyInBox,
+                    builder: (context, val, _) => Text(
+                      "Revenue ${val == -1 ? '-' : val} EGP",
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
                   ),
                   divider(),
-                  Text(
-                    "Revenue 75 EGP",
-                    style: Theme.of(context).textTheme.subtitle2,
+                  Selector<AppProvider, int>(
+                    selector: (_, val) => val.revenue,
+                    builder: (context, val, _) => Text(
+                      "Revenue ${val == -1 ? '-' : val} EGP",
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
                   ),
                 ],
               ),
               verticalLine(context),
               Column(
                 children: [
-                  Text("Today", style: Theme.of(context).textTheme.subtitle1),
+                  Text("Deals", style: Theme.of(context).textTheme.subtitle1),
                   divider(),
-                  Text("500 EGP", style: Theme.of(context).textTheme.subtitle1),
+                  Selector<AppProvider, int>(
+                    selector: (_, val) => val.orders,
+                    builder: (context, val, _) => Text(
+                      "Orders ${val == -1 ? '-' : val}",
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                  ),
                   divider(),
-                  Text(
-                    "75 EGP",
-                    style: Theme.of(context).textTheme.subtitle2,
+                  Selector<AppProvider, int>(
+                    selector: (_, val) => val.entries,
+                    builder: (context, val, _) => Text(
+                      "Entry ${val == -1 ? '-' : val}",
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
                   ),
                 ],
               ),

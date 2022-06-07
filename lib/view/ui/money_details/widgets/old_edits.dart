@@ -1,28 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/view_model/app_provider.dart';
 
 import '../../../../model/module/old_edit_money.dart';
 
 class OldEditList extends StatelessWidget {
-  OldEditList({Key? key}) : super(key: key);
-
-  final OldMoneyEdit oldMoneyEdit = OldMoneyEdit(
-      id: 0,
-      type: EditType.add,
-      notes: "Water invoice",
-      date: "25-052022",
-      amount: 120,
-      time: "9:12 AM");
+  const OldEditList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) => listItem(context, oldMoneyEdit),
-      separatorBuilder: (_, __) => const SizedBox(
-        height: 5,
-      ),
-      itemCount: 10,
+    return FutureBuilder<List<OldMoneyEdit>>(
+      future: context.read<AppProvider>().readAllMoneyEdits(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) =>
+                listItem(context, snapshot.data![index]),
+            separatorBuilder: (_, __) => const SizedBox(
+              height: 5,
+            ),
+            itemCount: snapshot.data?.length ?? 0,
+          );
+        } else {
+          if (snapshot.hasError) {
+            print(snapshot.error);
+            print(snapshot.stackTrace);
+
+            return const Center(
+              child: Text("Sorry an error accrued."),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        }
+      },
     );
   }
 

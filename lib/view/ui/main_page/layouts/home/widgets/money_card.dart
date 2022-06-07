@@ -43,7 +43,7 @@ class MoneyCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.subtitle1,
                 ),
                 divider(),
-                Selector<AppProvider, int>(
+                Selector<AppProvider, double>(
                   selector: (_, val) => val.moneyInBox,
                   builder: (context, val, _) => Text(
                     val == -1 ? '-' : "$val EGP",

@@ -17,8 +17,12 @@ class ProductLayout extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Selector<AppProvider, ShowData<Product>>(
-        shouldRebuild: (_, val) {
-          if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+        shouldRebuild: (_, __) {
+          try {
+            if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+          } catch (e) {
+            print(e);
+          }
           return true;
         },
         selector: (context, appProvider) => appProvider.productsShow,
@@ -119,6 +123,10 @@ class ProductLayout extends StatelessWidget {
                           Text(
                             item.name,
                             maxLines: 1,
+                            strutStyle: const StrutStyle(
+                              forceStrutHeight: true,
+                              height: 1.5,
+                            ),
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.subtitle1,
                           ),

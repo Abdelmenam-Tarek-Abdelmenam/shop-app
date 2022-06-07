@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/model/repository/dates_repository.dart';
 import 'package:shop/view/shared/widgets/form_field.dart';
+import 'package:shop/view_model/app_provider.dart';
 
 import '../../../../model/module/old_edit_money.dart';
 import '../../../resources/styles_manager.dart';
@@ -54,7 +56,17 @@ class EditBox extends StatelessWidget {
                     if (formKey.currentState?.validate() ?? false) {
                       if (await chooseDialog(context,
                           title: "Confirmation",
-                          content: "Are you sure you want to edit money")) {}
+                          content: "Are you sure you want to edit money")) {
+                        await context.read<AppProvider>().addMoneyEdit(
+                            OldMoneyEdit(
+                                id: 0,
+                                amount: double.parse(amountController.text),
+                                notes: notesController.text,
+                                date: editDate.formatDate,
+                                time: editTime.format(context),
+                                type: editType));
+                        notesController.clear();
+                      }
                     }
                   },
                   child: const Text("Save"))
@@ -117,7 +129,7 @@ class EditBox extends StatelessWidget {
                   child: Radio<EditType>(
                       value: editType,
                       fillColor: MaterialStateColor.resolveWith(
-                          (states) => Colors.red),
+                          (states) => Colors.blue),
                       groupValue: EditType.add,
                       onChanged: (val) {
                         setState(() {
@@ -130,7 +142,7 @@ class EditBox extends StatelessWidget {
                   style: Theme.of(context)
                       .textTheme
                       .subtitle1!
-                      .copyWith(color: Colors.red),
+                      .copyWith(color: Colors.blue),
                 ),
               ]),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -139,7 +151,7 @@ class EditBox extends StatelessWidget {
                   child: Radio<EditType>(
                       value: editType,
                       fillColor: MaterialStateColor.resolveWith(
-                          (states) => Colors.blue),
+                          (states) => Colors.red),
                       groupValue: EditType.remove,
                       onChanged: (val) {
                         setState(() {
@@ -152,7 +164,7 @@ class EditBox extends StatelessWidget {
                   style: Theme.of(context)
                       .textTheme
                       .subtitle1!
-                      .copyWith(color: Colors.blue),
+                      .copyWith(color: Colors.red),
                 ),
               ]),
             ],

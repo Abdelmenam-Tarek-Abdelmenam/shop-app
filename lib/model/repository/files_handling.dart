@@ -1,29 +1,41 @@
 part of 'database_repo.dart';
 
-const String _myDirectory = "Shop App";
-const String _myExtension = "men";
+const String _myDirectory = "Shop App/";
+const String _myExtension = "sh";
 const String _myFileName = "Shop_Data";
 
 class DbFileHandling {
-  Future<Database?> importDataBase() async {
-    FilePickerResult? value = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: [_myExtension]);
+  Future<bool> importDataBase() async {
+    FilePickerResult? value = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: [_myExtension],
+        withData: true);
     if (value != null && value.files.isNotEmpty) {
-      final Uint8List bytes = value.files.first.bytes!;
-      File(DataBaseRepository.instance.dataBasePath).writeAsBytes(bytes);
-      return openDatabase(DataBaseRepository.instance.dataBasePath);
+      File file = File(value.files.first.path!);
+      String data = file.readAsStringSync();
+      print(file.readAsBytesSync());
+      print(data);
+      Map<String, dynamic> dataMap = DataEncoding.decode(data);
+      DataBaseRepository.instance.fromJson(dataMap);
+      return true;
     }
-    return null;
+    return false;
   }
 
   Future<void> exportDataBase() async {
     File file = await _getNewFile('$_myFileName.$_myExtension');
-    file.copy(DataBaseRepository.instance.dataBasePath);
+    Map<String, ReturnedData> data =
+        await DataBaseRepository.instance.getAllData();
+    print(data);
+    String encoded = DataEncoding.encode(data);
+    print(encoded);
+    file.writeAsStringSync(encoded);
+    await DataBaseRepository.instance.initializeDatabase();
   }
 
   Future<void> saveCsv(ReturnedData data, String name) async {
     File file = await _getNewFile('$name${DateTime.now()}.csv');
-    file.copy(data.toString()); //TODO: Convert data to csv
+    file.writeAsString(data.toCsv);
   }
 
   Future<File> _getNewFile(String fileName) async {
@@ -31,11 +43,11 @@ class DbFileHandling {
       String newPath = await _findPath();
       Directory dir = Directory(newPath);
       if (await dir.exists()) {
-        File saveFile = File(fileName);
+        File saveFile = File(newPath + fileName);
         return saveFile;
       } else {
         await Directory(newPath).create();
-        File saveFile = File(fileName);
+        File saveFile = File(newPath + fileName);
         return saveFile;
       }
     } else {
@@ -54,6 +66,7 @@ class DbFileHandling {
         break;
       }
     }
+    print(newPath);
     newPath = newPath + "/$_myDirectory";
     return newPath;
   }
@@ -115,4 +128,16 @@ class ImageFileHandling {
           size: 20,
         ),
       );
+}
+
+extension CSV on ReturnedData {
+  String get toCsv {
+    if (isEmpty) return "";
+    String csv = '';
+    csv += this[0].keys.join(',') + '\n';
+    for (Map<String, dynamic> element in this) {
+      csv += element.values.join(',') + '\n';
+    }
+    return csv;
+  }
 }

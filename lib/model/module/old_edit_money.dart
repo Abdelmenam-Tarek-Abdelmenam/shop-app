@@ -1,6 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:shop/model/repository/database_repo.dart';
 
+class OldMoneyEdit {
+  int id;
+  EditType type;
+  String date;
+  String time;
+  String notes;
+  double amount;
+
+  OldMoneyEdit(
+      {required this.type,
+      required this.notes,
+      required this.date,
+      required this.amount,
+      required this.id,
+      required this.time});
+
+  factory OldMoneyEdit.fromJson(Map<String, dynamic> json) {
+    return OldMoneyEdit(
+        id: json[MoneyEditTable.id],
+        type: json[MoneyEditTable.type] == 0 ? EditType.add : EditType.remove,
+        notes: json[MoneyEditTable.notes],
+        date: json[MoneyEditTable.date],
+        amount: json[MoneyEditTable.amount] * 1.0,
+        time: json[MoneyEditTable.time]);
+  }
+
+  Map<String, dynamic> get toJson {
+    return {
+      MoneyEditTable.id: id,
+      MoneyEditTable.notes: notes,
+      MoneyEditTable.date: date,
+      MoneyEditTable.amount: amount,
+      MoneyEditTable.time: time,
+      MoneyEditTable.type: type == EditType.add ? 0 : 1
+    };
+  }
+}
+
 enum EditType { add, remove }
 
 extension GetWidget on EditType {
@@ -29,43 +67,5 @@ extension GetWidget on EditType {
       case EditType.add:
         return Icons.add;
     }
-  }
-}
-
-class OldMoneyEdit {
-  int id;
-  EditType type;
-  String date;
-  String time;
-  String notes;
-  int amount;
-
-  OldMoneyEdit(
-      {required this.type,
-      required this.notes,
-      required this.date,
-      required this.amount,
-      required this.id,
-      required this.time});
-
-  factory OldMoneyEdit.fromJson(Map<String, dynamic> json) {
-    return OldMoneyEdit(
-        id: json[MoneyEditTable.id],
-        type: json[MoneyEditTable.type] == 0 ? EditType.add : EditType.remove,
-        notes: json[MoneyEditTable.notes],
-        date: json[MoneyEditTable.date],
-        amount: json[MoneyEditTable.amount],
-        time: json[MoneyEditTable.time]);
-  }
-
-  Map<String, dynamic> get toJson {
-    return {
-      MoneyEditTable.id: id,
-      MoneyEditTable.notes: notes,
-      MoneyEditTable.date: date,
-      MoneyEditTable.amount: amount,
-      MoneyEditTable.time: time,
-      MoneyEditTable.type: type == EditType.add ? 0 : 1
-    };
   }
 }

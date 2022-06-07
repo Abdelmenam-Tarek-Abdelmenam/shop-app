@@ -13,6 +13,7 @@ import 'package:shop/model/module/product.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../module/ui_models.dart';
+import 'data_encodeing.dart';
 
 part '../contstants/database_schema.dart';
 
@@ -26,11 +27,6 @@ class DataBaseRepository {
   static DataBaseRepository get instance => _instance ??= DataBaseRepository();
 
   late Database _database;
-  String get dataBasePath => _database.path;
-
-  set database(Database? database) {
-    _database = database ?? _database;
-  }
 
   /// get products by id for deals
   Future<Product> getProduct(String id) async {
@@ -90,18 +86,12 @@ class DataBaseRepository {
     return old;
   }
 
-  Future<ShowData<OldMoneyEdit>> getSomeMoneyEdits(
-      ShowData<OldMoneyEdit> old) async {
-    old.maxNumber = await _countData(MoneyEditTable.tableName);
-    old.getNext();
+  Future<List<OldMoneyEdit>> getMoneyEdits() async {
     ReturnedData maps = await _database.query(
       MoneyEditTable.tableName,
-      limit: old.end,
-      offset: old.maxNumber - old.end,
     );
-    old.data
-        .addAll(maps.map((e) => OldMoneyEdit.fromJson(e)).toList().reversed);
-    return old;
+
+    return maps.map((e) => OldMoneyEdit.fromJson(e)).toList().reversed.toList();
   }
 
   /// filter data
@@ -143,16 +133,19 @@ class DataBaseRepository {
   }
 
   Future<void> insertMoneyEdit(OldMoneyEdit oldEditMoney) async {
-    await _database.insert(MoneyEditTable.tableName,
-        oldEditMoney.toJson.remove(MoneyEditTable.id));
+    Map<String, dynamic> map = oldEditMoney.toJson;
+    map.remove(ProductsTable.id);
+    await _database.insert(MoneyEditTable.tableName, map);
   }
 
   /// edit data in database
   Future<void> editProduct(Product product) async {
     Map<String, dynamic> map = product.toJson;
     map.remove(ProductsTable.id);
+    print(product.id);
+    print("data ${product.id}");
     await _database.update(ProductsTable.tableName, map,
-        where: '${ProductsTable.id} = ?', whereArgs: [product.id]);
+        where: '${ProductsTable.id} = ${product.id}');
   }
 
   Future<void> editEntry(EntryModel entry) async {
@@ -174,6 +167,25 @@ class DataBaseRepository {
   }
 
   /// get reports data
+  Future<Map<String, ReturnedData>> getAllData() async {
+    Map<String, ReturnedData> data = {};
+    for (String table in _TablesSchema.allNames) {
+      data[table] = await _database.query(table);
+    }
+
+    return data;
+  }
+
+  Future<void> fromJson(Map<String, dynamic> json) async {
+    await delete();
+    await initializeDatabase();
+    for (String table in _TablesSchema.allNames) {
+      for (Map<String, dynamic> map in json[table]!) {
+        await _database.insert(table, map);
+      }
+    }
+  }
+
   Future<ReturnedData> getZeroAmountProduct() async {
     ReturnedData data = await _database.query(ProductsTable.tableName,
         where: "${ProductsTable.amount} = 0");
@@ -212,37 +224,38 @@ class DataBaseRepository {
         where: "${ProductsTable.id} = ?", whereArgs: [id]);
   }
 
-  Future<void> deleteAllProducts() async {
-    await _database.delete(ProductsTable.tableName);
-  }
+  // Future<void> deleteAllProducts() async {
+  //   await _database.delete(ProductsTable.tableName);
+  // }
 
-  Future<void> deleteOrder(int id) async {
-    await _database.delete(OrderTable.tableName,
-        where: "${OrderTable.id} = ?", whereArgs: [id]);
-  }
+  // Future<void> deleteOrder(int id) async {
+  //   await _database.delete(OrderTable.tableName,
+  //       where: "${OrderTable.id} = ?", whereArgs: [id]);
+  // }
 
-  Future<void> deleteAllOrders() async {
-    await _database.delete(OrderTable.tableName);
-  }
+  // Future<void> deleteAllOrders() async {
+  //   await _database.delete(OrderTable.tableName);
+  // }
 
-  Future<void> deleteEntry(int id) async {
-    await _database.delete(EntryTable.tableName,
-        where: "${EntryTable.id} = ?", whereArgs: [id]);
-  }
+  // Future<void> deleteEntry(int id) async {
+  //   await _database.delete(EntryTable.tableName,
+  //       where: "${EntryTable.id} = ?", whereArgs: [id]);
+  // }
 
-  Future<void> deleteAllEntries() async {
-    await _database.delete(EntryTable.tableName);
-  }
+  // Future<void> deleteAllEntries() async {
+  //   await _database.delete(EntryTable.tableName);
+  // }
 
-  Future<void> deleteAllMoneyEdits() async {
-    await _database.delete(MoneyEditTable.tableName);
-  }
+  // Future<void> deleteAllMoneyEdits() async {
+  //   await _database.delete(MoneyEditTable.tableName);
+  // }
 
-  Future<void> deleteMoneyEdit(int id) async {
-    await _database.delete(MoneyEditTable.tableName,
-        where: "${MoneyEditTable.id} = ?", whereArgs: [id]);
-  }
+  // Future<void> deleteMoneyEdit(int id) async {
+  //   await _database.delete(MoneyEditTable.tableName,
+  //       where: "${MoneyEditTable.id} = ?", whereArgs: [id]);
+  // }
 
+  /// helper functions
   Future<int> _countData(String tableName) async {
     ReturnedData value =
         await _database.rawQuery("SELECT COUNT(*) FROM $tableName");

@@ -51,7 +51,7 @@ class AddProductView extends StatelessWidget {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 Product product = Product(
-                    id: 0,
+                    id: arg.product?.id ?? 0,
                     name: _nameController.text,
                     notes: _notesController.text,
                     amount: double.parse(_amountController.text),
@@ -74,17 +74,23 @@ class AddProductView extends StatelessWidget {
           ),
           appBar: AppBar(
             title: Text("${arg.product == null ? "Add" : "Edit"} Product"),
-            actions:arg.product == null ? null : [
-              IconButton(
-                icon: const Icon(Icons.delete_outline),
-                onPressed: () async {
-                   if(await chooseDialog(context, title : "Delete Product",
-                      content : "Are you sure you want to delete this product?")){
-                     await context.read<AppProvider>().deleteProduct(arg.product!,arg.index!);
-                   }
-                },
-              )
-            ],
+            actions: arg.product == null
+                ? null
+                : [
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: () async {
+                        if (await chooseDialog(context,
+                            title: "Delete Product",
+                            content:
+                                "Are you sure you want to delete this product?")) {
+                          await context
+                              .read<AppProvider>()
+                              .deleteProduct(arg.product!, arg.index!);
+                        }
+                      },
+                    )
+                  ],
           ),
           body: Padding(
             padding: const EdgeInsets.all(10.0),
