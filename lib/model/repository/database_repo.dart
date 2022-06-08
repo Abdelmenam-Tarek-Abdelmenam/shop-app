@@ -123,8 +123,10 @@ class DataBaseRepository {
   }
 
   Future<void> insertEntry(EntryModel entry) async {
-    await _database.insert(
-        EntryTable.tableName, entry.toJson.remove(EntryTable.id));
+    Map<String, dynamic> map = entry.toJson;
+    map.remove(ProductsTable.id);
+    print(map);
+    await _database.insert(EntryTable.tableName, map);
   }
 
   Future<void> insertOrder(OrderModel order) async {
@@ -142,15 +144,14 @@ class DataBaseRepository {
   Future<void> editProduct(Product product) async {
     Map<String, dynamic> map = product.toJson;
     map.remove(ProductsTable.id);
-    print(product.id);
-    print("data ${product.id}");
     await _database.update(ProductsTable.tableName, map,
         where: '${ProductsTable.id} = ${product.id}');
   }
 
   Future<void> editEntry(EntryModel entry) async {
-    await _database.update(
-        EntryTable.tableName, entry.toJson.remove(EntryTable.id),
+    Map<String, dynamic> map = entry.toJson;
+    map.remove(ProductsTable.id);
+    await _database.update(EntryTable.tableName, map,
         where: '${EntryTable.id} = ${entry.id}');
   }
 

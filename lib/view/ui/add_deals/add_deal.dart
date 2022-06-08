@@ -1,44 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/model/module/deals.dart';
+import 'package:shop/view/ui/add_deals/widgets/add_box.dart';
+import 'package:shop/view/ui/add_deals/widgets/confirm_dialog.dart';
+import 'package:shop/view/ui/add_deals/widgets/old_entries.dart';
+import 'package:shop/view_model/add_deal_provider.dart';
 
 import '../../../model/repository/dates_repository.dart';
-import '../../../view_model/add_entry_provider.dart';
 import '../../resources/styles_manager.dart';
-import 'widgets/add_box.dart';
-import 'widgets/old_entries.dart';
 
 class AddDealView extends StatelessWidget {
-  const AddDealView({this.entry, Key? key}) : super(key: key);
-  final EntryModel? entry;
+  const AddDealView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-      child: ChangeNotifierProvider(
-        create: (_) => AddEntryProvider(entry ?? EntryModel.empty()),
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text("${entry == null ? "Add" : "Edit"} entry"),
-              actions: [
-                IconButton(
-                    onPressed: () async {
-                      DateTime entryDate =
-                          context.read<AddEntryProvider>().entry.date.parseDate;
-                      entryDate = await DateRepository.selectDate(
-                          context: context, initial: entryDate);
-                      context.read<AddEntryProvider>().changeDate(entryDate);
-                    },
-                    icon: const Icon(Icons.calendar_today))
-              ],
-            ),
-            body: Padding(
+      child: Scaffold(
+          floatingActionButton: FloatingActionButton(
+            child: const Icon(Icons.save_outlined),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (_) {
+                    return Dialog(
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
+                      child: ConfirmDialog(context.read<AddDealProvider>()),
+                      //  contentPadding: const EdgeInsets.all(0.0),
+                    );
+                  });
+
+              // context.read<AddEntryProvider>().save();
+            },
+          ),
+          appBar: AppBar(
+            title: Text(
+                "${context.read<AddDealProvider>().entry.isEmpty ? "Add" : "Edit"} entry"),
+            actions: [
+              IconButton(
+                  onPressed: () async {
+                    DateTime entryDate =
+                        context.read<AddDealProvider>().entry.date.parseDate;
+                    entryDate = await DateRepository.selectDate(
+                        context: context, initial: entryDate);
+                    context.read<AddDealProvider>().changeDate(entryDate);
+                  },
+                  icon: const Icon(Icons.calendar_today))
+            ],
+          ),
+          body: AbsorbPointer(
+            absorbing: !context.read<AddDealProvider>().entry.isEmpty,
+            child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: ListView(
                 physics: const BouncingScrollPhysics(),
                 children: [
-                  Text("Date: ${context.watch()<AddEntryProvider>().date}",
+                  Text("Date: ${provider(context).entry.date}",
                       style: Theme.of(context).textTheme.headline4),
                   const SizedBox(height: 10),
                   upperBox(context),
@@ -46,19 +63,18 @@ class AddDealView extends StatelessWidget {
                   Text("Add Product",
                       style: Theme.of(context).textTheme.headline4),
                   divider(),
-                  AddBox(),
+                  Visibility(
+                      visible: context.read<AddDealProvider>().entry.isEmpty,
+                      child: AddBox()),
                   ...List.generate(2, (index) => divider()),
                   Text("Products",
                       style: Theme.of(context).textTheme.headline4),
                   divider(),
-                  Selector<AddEntryProvider, List<DealAddProduct>>(
-                      selector: (_, val) => val.products,
-                      shouldRebuild: (_, __) => true,
-                      builder: (context, val, _) => ProductsList(val)),
+                  ProductsList(provider(context).products),
                 ],
               ),
-            )),
-      ),
+            ),
+          )),
     );
   }
 
@@ -80,7 +96,7 @@ class AddDealView extends StatelessWidget {
                 ),
                 divider(),
                 Text(
-                  "850 EGP",
+                  "${provider(context).entry.totalPrice} EGP",
                   style: Theme.of(context).textTheme.subtitle1,
                 ),
               ],
@@ -90,7 +106,8 @@ class AddDealView extends StatelessWidget {
               children: [
                 Text("Items", style: Theme.of(context).textTheme.subtitle1),
                 divider(),
-                Text("50 item", style: Theme.of(context).textTheme.subtitle1),
+                Text("${provider(context).entry.items.length} item",
+                    style: Theme.of(context).textTheme.subtitle1),
                 divider(),
               ],
             ),
@@ -108,4 +125,7 @@ class AddDealView extends StatelessWidget {
   Widget divider() => const SizedBox(
         height: 5.0,
       );
+
+  AddDealProvider provider(BuildContext context) =>
+      context.watch<AddDealProvider>();
 }

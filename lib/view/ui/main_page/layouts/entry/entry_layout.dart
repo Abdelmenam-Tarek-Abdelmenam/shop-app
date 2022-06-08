@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/view/resources/routes_manger.dart';
 import 'package:shop/view_model/app_provider.dart';
 
 import '../../../../../model/module/deals.dart';
@@ -17,9 +18,8 @@ class EntryLayout extends StatelessWidget {
         shouldRebuild: (_, __) {
           try {
             if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-          } catch (e) {
-            print(e);
-          }
+            // ignore: empty_catches
+          } catch (e) {}
           return true;
         },
         builder: (context, entries, _) =>
@@ -75,37 +75,43 @@ class EntryLayout extends StatelessWidget {
     );
   }
 
-  Widget listItem(BuildContext context, EntryModel item) => ListTile(
-        title: Text(
-          item.name,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+  Widget listItem(BuildContext context, EntryModel item) => InkWell(
+        onTap: () => Navigator.of(context).pushNamed(
+          Routes.addEntryRoute,
+          arguments: item,
         ),
-        isThreeLine: false,
-        subtitle: Text("${item.date} | ${item.itemsCount} items"),
-        trailing: FittedBox(
-          fit: BoxFit.fill,
-          child: Column(
-            children: [
-              Text("${item.totalMoney} EGP"),
-              const SizedBox(
-                height: 5,
-              ),
-              Row(
-                children: [
-                  Icon(
-                    item.type.icon,
-                    size: 20,
-                    color: item.type.color,
-                  ),
-                  Text(item.type.text,
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1!
-                          .copyWith(color: item.type.color))
-                ],
-              )
-            ],
+        child: ListTile(
+          title: Text(
+            item.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          isThreeLine: false,
+          subtitle: Text("${item.date} | ${item.itemsCount} items"),
+          trailing: FittedBox(
+            fit: BoxFit.fill,
+            child: Column(
+              children: [
+                Text("${item.totalPrice} EGP"),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      item.type.icon,
+                      size: 20,
+                      color: item.type.color,
+                    ),
+                    Text(item.type.text,
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle1!
+                            .copyWith(color: item.type.color))
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       );

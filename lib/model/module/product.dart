@@ -56,16 +56,17 @@ class Product extends Equatable {
   factory Product.empty() {
     return Product(
         notes: 'This product has no notes',
-        name: 'Old Product',
+        name: 'No Product',
         date: '',
         amount: 0,
-        id: 0,
+        id: -1,
         img: null,
         realPrice: 0,
         sellPrice: 0);
   }
 
   bool get check => sellPrice < realPrice;
+  bool get isEmpty => id == -1;
 
   @override
   List<Object?> get props => [id];

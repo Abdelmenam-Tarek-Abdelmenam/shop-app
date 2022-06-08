@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../model/module/deals.dart';
-import '../../../../model/module/product.dart';
+import '../../../../view_model/add_deal_provider.dart';
 
 class ProductsList extends StatelessWidget {
   const ProductsList(this.products, {Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class ProductsList extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) =>
-          listItem(context, products[index].product),
+          listItem(context, products[index], index),
       separatorBuilder: (_, __) => const SizedBox(
         height: 5,
       ),
@@ -22,8 +23,11 @@ class ProductsList extends StatelessWidget {
     );
   }
 
-  Widget listItem(BuildContext context, Product item) => Dismissible(
-        key: Key(item.id.toString()),
+  Widget listItem(BuildContext context, DealAddProduct item, int index) =>
+      Dismissible(
+        key: Key(item.product.id.toString()),
+        onDismissed: (_) =>
+            context.read<AddDealProvider>().removeProduct(index),
         direction: DismissDirection.endToStart,
         background: Container(
           color: Colors.red,
@@ -31,15 +35,15 @@ class ProductsList extends StatelessWidget {
         ),
         child: ListTile(
           title: Text(
-            item.name,
+            item.product.name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           isThreeLine: false,
-          subtitle: Text("2 Items | ${item.sellPrice} EGP"),
-          trailing: const FittedBox(
+          subtitle: Text("${item.amount} Items | ${item.price} EGP"),
+          trailing: FittedBox(
             fit: BoxFit.fill,
-            child: Text("120 EGP"),
+            child: Text("${item.amount * item.price} EGP"),
           ),
         ),
       );

@@ -25,9 +25,6 @@ class OldEditList extends StatelessWidget {
           );
         } else {
           if (snapshot.hasError) {
-            print(snapshot.error);
-            print(snapshot.stackTrace);
-
             return const Center(
               child: Text("Sorry an error accrued."),
             );
