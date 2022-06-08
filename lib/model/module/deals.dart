@@ -134,7 +134,7 @@ class OrderModel extends Deal {
       type: map[OrderTable.type] == 0 ? PaymentType.paid : PaymentType.not,
       items: json
           .decode(map[OrderTable.items])
-          .map((p) => DealProduct.fromJson(p))
+          .map<DealProduct>((item) => DealProduct.fromJson(item))
           .toList(),
       date: map[OrderTable.date],
       name: map[OrderTable.name],

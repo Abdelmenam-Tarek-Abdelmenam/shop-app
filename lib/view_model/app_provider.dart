@@ -58,6 +58,9 @@ class AppProvider with ChangeNotifier {
       await DataBaseRepository.instance.insertEntry(entry);
       for (DealProduct item in entry.items) {
         await DataBaseRepository.instance.editProductDeal(item, true);
+        productsShow.data
+            .firstWhere((element) => element.id == item.id)
+            .amount += item.amount;
       }
       entriesShow.addData(entry);
       if (entry.type == PaymentType.paid) moneyInBox -= entry.totalPrice;
@@ -90,6 +93,9 @@ class AppProvider with ChangeNotifier {
       DataBaseRepository.instance.insertOrder(order);
       for (DealProduct item in order.items) {
         await DataBaseRepository.instance.editProductDeal(item, false);
+        productsShow.data
+            .firstWhere((element) => element.id == item.id)
+            .amount -= item.amount;
       }
       ordersShow.addData(order);
       ordersShow.maxNumber++;
