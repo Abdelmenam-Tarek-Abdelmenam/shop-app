@@ -14,7 +14,7 @@ class ConfirmDialog extends StatelessWidget {
   ConfirmDialog(this.provider, {Key? key}) : super(key: key);
 
   late final TextEditingController _moneyController =
-      TextEditingController(text: provider.entry.totalPrice.toString());
+      TextEditingController(text: provider.deal.totalPrice.toString());
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -30,7 +30,7 @@ class ConfirmDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Add entry confirmation",
+            "${provider.isEntry ? "Entry" : "Order"} confirmation",
             style: Theme.of(context).textTheme.subtitle1,
           ),
           const SizedBox(
@@ -40,11 +40,11 @@ class ConfirmDialog extends StatelessWidget {
             height: 50,
             child: DefaultFormField(
                 border: true,
-                controller: TextEditingController(text: provider.entry.name),
+                controller: TextEditingController(text: provider.deal.name),
                 onChanged: (value) {
-                  provider.entry.name = value;
+                  provider.deal.name = value;
                 },
-                title: "Supplier name",
+                title: provider.isEntry ? "Supplier name" : "Buyer name",
                 prefix: Icons.factory),
           ),
           _radioButtons(),
@@ -71,7 +71,7 @@ class ConfirmDialog extends StatelessWidget {
                         valueListenable: _moneyController,
                         builder: (context, value, _) {
                           double rest = (double.tryParse(value.text) ?? 0) -
-                              provider.entry.totalPrice;
+                              provider.deal.totalPrice;
                           return Text(
                             "$rest EGP",
                             style: Theme.of(context)
@@ -90,14 +90,22 @@ class ConfirmDialog extends StatelessWidget {
           Center(
             child: ElevatedButton(
                 onPressed: () async {
-                  if (provider.entry.isEmpty) {
-                    context.read<AppProvider>().addEntry(provider.entry);
+                  if (provider.deal.isEmpty) {
+                    if (provider.isEntry) {
+                      context.read<AppProvider>().addEntry(provider.entry);
+                    } else {
+                      context.read<AppProvider>().addOrder(provider.order);
+                    }
                   } else {
-                    context.read<AppProvider>().editEntry(provider.entry);
+                    if (provider.isEntry) {
+                      context.read<AppProvider>().editEntry(provider.entry);
+                    } else {
+                      context.read<AppProvider>().editOrder(provider.order);
+                    }
                   }
                   Navigator.of(context).pop();
                 },
-                child: Text(provider.entry.isEmpty ? "Save" : "Edit")),
+                child: Text(provider.deal.isEmpty ? "Save" : "Edit")),
           ),
         ],
       ),
@@ -112,13 +120,13 @@ class ConfirmDialog extends StatelessWidget {
                 SizedBox(
                   width: 30,
                   child: Radio<PaymentType>(
-                      value: provider.entry.type,
+                      value: provider.deal.type,
                       fillColor: MaterialStateColor.resolveWith(
                           (states) => PaymentType.paid.color),
                       groupValue: PaymentType.paid,
                       onChanged: (val) {
                         setState(() {
-                          provider.entry.type = PaymentType.paid;
+                          provider.deal.type = PaymentType.paid;
                         });
                       }),
                 ),
@@ -134,13 +142,13 @@ class ConfirmDialog extends StatelessWidget {
                 SizedBox(
                   width: 30,
                   child: Radio<PaymentType>(
-                      value: provider.entry.type,
+                      value: provider.deal.type,
                       fillColor: MaterialStateColor.resolveWith(
                           (states) => PaymentType.not.color),
                       groupValue: PaymentType.not,
                       onChanged: (val) {
                         setState(() {
-                          provider.entry.type = PaymentType.not;
+                          provider.deal.type = PaymentType.not;
                         });
                       }),
                 ),

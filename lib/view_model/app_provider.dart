@@ -65,7 +65,6 @@ class AppProvider with ChangeNotifier {
       EasyLoading.showSuccess('Entry added successfully');
       notifyListeners();
     } catch (err) {
-      print(err);
       EasyLoading.showError("An error happened while add entry");
     }
   }
@@ -94,8 +93,23 @@ class AppProvider with ChangeNotifier {
       }
       ordersShow.addData(order);
       ordersShow.maxNumber++;
-      moneyInBox += order.totalPrice;
+      if (order.type == PaymentType.paid) moneyInBox += order.totalPrice;
+
       EasyLoading.showSuccess('Order added successfully');
+      notifyListeners();
+    } catch (err) {
+      EasyLoading.showError("An error happened while add order");
+    }
+  }
+
+  Future<void> editOrder(OrderModel order) async {
+    EasyLoading.show(status: "Editing order");
+
+    try {
+      await DataBaseRepository.instance.editOrder(order);
+      int index = entriesShow.data.indexWhere((e) => e.id == order.id);
+      ordersShow.data[index] = order;
+      EasyLoading.showSuccess('Order edited successfully');
       notifyListeners();
     } catch (err) {
       EasyLoading.showError("An error happened while add order");

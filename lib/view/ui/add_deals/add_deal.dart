@@ -35,12 +35,12 @@ class AddDealView extends StatelessWidget {
           ),
           appBar: AppBar(
             title: Text(
-                "${context.read<AddDealProvider>().entry.isEmpty ? "Add" : "Edit"} entry"),
+                "${context.read<AddDealProvider>().deal.isEmpty ? "Add" : "Edit"} ${context.read<AddDealProvider>().isEntry ? "Entry" : "Order"}"),
             actions: [
               IconButton(
                   onPressed: () async {
                     DateTime entryDate =
-                        context.read<AddDealProvider>().entry.date.parseDate;
+                        context.read<AddDealProvider>().deal.date.parseDate;
                     entryDate = await DateRepository.selectDate(
                         context: context, initial: entryDate);
                     context.read<AddDealProvider>().changeDate(entryDate);
@@ -49,13 +49,13 @@ class AddDealView extends StatelessWidget {
             ],
           ),
           body: AbsorbPointer(
-            absorbing: !context.read<AddDealProvider>().entry.isEmpty,
+            absorbing: !context.read<AddDealProvider>().deal.isEmpty,
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: ListView(
                 physics: const BouncingScrollPhysics(),
                 children: [
-                  Text("Date: ${provider(context).entry.date}",
+                  Text("Date: ${provider(context).deal.date}",
                       style: Theme.of(context).textTheme.headline4),
                   const SizedBox(height: 10),
                   upperBox(context),
@@ -64,7 +64,7 @@ class AddDealView extends StatelessWidget {
                       style: Theme.of(context).textTheme.headline4),
                   divider(),
                   Visibility(
-                      visible: context.read<AddDealProvider>().entry.isEmpty,
+                      visible: context.read<AddDealProvider>().deal.isEmpty,
                       child: AddBox()),
                   ...List.generate(2, (index) => divider()),
                   Text("Products",
@@ -96,7 +96,7 @@ class AddDealView extends StatelessWidget {
                 ),
                 divider(),
                 Text(
-                  "${provider(context).entry.totalPrice} EGP",
+                  "${provider(context).deal.totalPrice} EGP",
                   style: Theme.of(context).textTheme.subtitle1,
                 ),
               ],
@@ -106,7 +106,7 @@ class AddDealView extends StatelessWidget {
               children: [
                 Text("Items", style: Theme.of(context).textTheme.subtitle1),
                 divider(),
-                Text("${provider(context).entry.items.length} item",
+                Text("${provider(context).deal.items.length} item",
                     style: Theme.of(context).textTheme.subtitle1),
                 divider(),
               ],

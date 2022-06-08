@@ -8,8 +8,7 @@ import '../model/module/product.dart';
 
 class AddDealProvider with ChangeNotifier {
   AddDealProvider(this.deal) {
-    print(entry.toJson);
-    if (!entry.isEmpty) {
+    if (!deal.isEmpty) {
       getProducts();
     }
   }
@@ -23,14 +22,14 @@ class AddDealProvider with ChangeNotifier {
   DealAddProduct activeProduct = DealAddProduct.empty();
 
   Future<void> getProducts() async {
-    List<int> ids = entry.items.map((e) => e.id).toList();
+    List<int> ids = deal.items.map((e) => e.id).toList();
     List<Product> entryProducts =
         await DataBaseRepository.instance.getProducts(ids);
-    products = List.generate(entry.items.length, (index) {
+    products = List.generate(deal.items.length, (index) {
       return DealAddProduct(
         product: entryProducts[index],
-        amount: entry.items[index].amount,
-        price: entry.items[index].price,
+        amount: deal.items[index].amount,
+        price: deal.items[index].price,
       );
     });
     notifyListeners();
@@ -45,12 +44,16 @@ class AddDealProvider with ChangeNotifier {
 
   void removeProduct(int index) {
     products.removeAt(index);
-    entry.items.removeAt(index);
+    deal.items.removeAt(index);
     notifyListeners();
   }
 
   void addProduct() {
-    if (activeProduct.price != activeProduct.product.realPrice) {
+    if (!isEntry && (activeProduct.price < activeProduct.product.realPrice)) {
+      EasyLoading.showError("Invalid Price");
+      return;
+    }
+    if (isEntry && (activeProduct.price != activeProduct.product.realPrice)) {
       EasyLoading.showError(
           "Supplier price change , please modify product price");
     }
@@ -69,7 +72,7 @@ class AddDealProvider with ChangeNotifier {
       }
     }
     products.add(activeProduct);
-    entry.items.add(activeProduct.toDealProduct);
+    deal.items.add(activeProduct.toDealProduct);
     activeProduct = DealAddProduct.empty();
     notifyListeners();
   }
@@ -82,7 +85,11 @@ class AddDealProvider with ChangeNotifier {
   void changeActiveProduct(Product product) {
     activeProduct.product = product;
     activeProduct.amount = 0;
-    activeProduct.price = product.realPrice;
+    if (isEntry) {
+      activeProduct.price = product.realPrice;
+    } else {
+      activeProduct.price = product.sellPrice;
+    }
     notifyListeners();
   }
 
@@ -92,7 +99,7 @@ class AddDealProvider with ChangeNotifier {
   }
 
   void changeDate(DateTime dateTime) {
-    entry.date = dateTime.formatDate;
+    deal.date = dateTime.formatDate;
     notifyListeners();
   }
 }

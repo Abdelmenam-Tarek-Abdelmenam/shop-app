@@ -125,13 +125,13 @@ class DataBaseRepository {
   Future<void> insertEntry(EntryModel entry) async {
     Map<String, dynamic> map = entry.toJson;
     map.remove(ProductsTable.id);
-    print(map);
     await _database.insert(EntryTable.tableName, map);
   }
 
   Future<void> insertOrder(OrderModel order) async {
-    await _database.insert(
-        OrderTable.tableName, order.toJson.remove(OrderTable.id));
+    Map<String, dynamic> map = order.toJson;
+    map.remove(ProductsTable.id);
+    await _database.insert(OrderTable.tableName, map);
   }
 
   Future<void> insertMoneyEdit(OldMoneyEdit oldEditMoney) async {
@@ -167,8 +167,9 @@ class DataBaseRepository {
   }
 
   Future<void> editOrder(OrderModel order) async {
-    await _database.update(
-        OrderTable.tableName, order.toJson.remove(OrderTable.id),
+    Map<String, dynamic> map = order.toJson;
+    map.remove(ProductsTable.id);
+    await _database.update(OrderTable.tableName, map,
         where: '${OrderTable.id} = ?', whereArgs: [order.id]);
   }
 

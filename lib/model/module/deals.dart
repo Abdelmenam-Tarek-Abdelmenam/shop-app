@@ -120,7 +120,7 @@ class OrderModel extends Deal {
   Map<String, dynamic> get toJson => {
         OrderTable.id: id,
         OrderTable.type: type == PaymentType.paid ? 0 : 1,
-        OrderTable.items: items.map((e) => e.toJson).toList(),
+        OrderTable.items: json.encode(items.map((e) => e.toJson).toList()),
         OrderTable.date: date,
         OrderTable.name: name,
         OrderTable.time: time,
@@ -128,15 +128,17 @@ class OrderModel extends Deal {
         OrderTable.profit: profit
       };
 
-  factory OrderModel.fromJson(Map<String, dynamic> json) {
+  factory OrderModel.fromJson(Map<String, dynamic> map) {
     return OrderModel(
-      id: json[OrderTable.id],
-      type: json[OrderTable.type] == 0 ? PaymentType.paid : PaymentType.not,
-      items:
-          json[OrderTable.items].map((p) => DealProduct.fromJson(p)).toList(),
-      date: json[OrderTable.date],
-      name: json[OrderTable.name],
-      time: json[OrderTable.time],
+      id: map[OrderTable.id],
+      type: map[OrderTable.type] == 0 ? PaymentType.paid : PaymentType.not,
+      items: json
+          .decode(map[OrderTable.items])
+          .map((p) => DealProduct.fromJson(p))
+          .toList(),
+      date: map[OrderTable.date],
+      name: map[OrderTable.name],
+      time: map[OrderTable.time],
     );
   }
 }
