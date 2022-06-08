@@ -14,6 +14,7 @@ class AppProvider with ChangeNotifier {
   double moneyInBox = 300;
   int revenue = 50;
   int orders = 7;
+
   int entries = 2;
 
   Future<void> startApp() async {
@@ -54,14 +55,29 @@ class AppProvider with ChangeNotifier {
   Future<void> addEntry(EntryModel entry) async {
     EasyLoading.show(status: "Adding entry");
     try {
-      DataBaseRepository.instance.insertEntry(entry);
+      await DataBaseRepository.instance.insertEntry(entry);
       for (DealProduct item in entry.items) {
         await DataBaseRepository.instance.editProductDeal(item, true);
       }
       entriesShow.addData(entry);
+      if (entry.type == PaymentType.paid) moneyInBox -= entry.totalPrice;
       entriesShow.maxNumber++;
-      moneyInBox -= entry.totalPrice;
       EasyLoading.showSuccess('Entry added successfully');
+      notifyListeners();
+    } catch (err) {
+      print(err);
+      EasyLoading.showError("An error happened while add entry");
+    }
+  }
+
+  Future<void> editEntry(EntryModel entry) async {
+    EasyLoading.show(status: "Editing entry");
+
+    try {
+      await DataBaseRepository.instance.editEntry(entry);
+      int index = entriesShow.data.indexWhere((e) => e.id == entry.id);
+      entriesShow.data[index] = entry;
+      EasyLoading.showSuccess('Entry edited successfully');
       notifyListeners();
     } catch (err) {
       EasyLoading.showError("An error happened while add entry");
@@ -105,7 +121,6 @@ class AppProvider with ChangeNotifier {
   }
 
   Future<void> editProduct(Product product, int index) async {
-    print(product.name);
     EasyLoading.show(status: "Editing product");
     if (product.check) {
       EasyLoading.showError("Invalid sell price");
@@ -116,9 +131,7 @@ class AppProvider with ChangeNotifier {
       productsShow.data[index] = product;
       EasyLoading.showSuccess('Product edited successfully');
       notifyListeners();
-    } catch (err, stack) {
-      print(err);
-      print(stack);
+    } catch (err) {
       EasyLoading.showError("An error happened while add product");
     }
   }
@@ -131,9 +144,7 @@ class AppProvider with ChangeNotifier {
       productsShow.maxNumber--;
       EasyLoading.showSuccess('Product deleted successfully');
       notifyListeners();
-    } catch (err, stack) {
-      print(err);
-      print(stack);
+    } catch (err) {
       EasyLoading.showError("An error happened while add product");
     }
   }

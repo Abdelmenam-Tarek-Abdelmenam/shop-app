@@ -13,6 +13,7 @@ class DefaultFormField extends StatelessWidget {
       this.keyboardType,
       this.suffix,
       this.border = false,
+      this.onChanged,
       Key? key})
       : super(key: key);
 
@@ -25,6 +26,7 @@ class DefaultFormField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final TextInputType? keyboardType;
   final Widget? suffix;
+  final Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,7 @@ class DefaultFormField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         obscureText: isPass,
+        onChanged: onChanged,
         autofillHints: fillHint == null ? null : [fillHint!],
         keyboardType: keyboardType,
         validator: validator,

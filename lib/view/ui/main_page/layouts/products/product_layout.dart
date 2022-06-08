@@ -20,9 +20,8 @@ class ProductLayout extends StatelessWidget {
         shouldRebuild: (_, __) {
           try {
             if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-          } catch (e) {
-            print(e);
-          }
+            // ignore: empty_catches
+          } catch (e) {}
           return true;
         },
         selector: (context, appProvider) => appProvider.productsShow,

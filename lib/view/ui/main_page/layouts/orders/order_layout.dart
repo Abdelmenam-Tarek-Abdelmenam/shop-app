@@ -17,9 +17,8 @@ class OrderLayout extends StatelessWidget {
         shouldRebuild: (_, __) {
           try {
             if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-          } catch (e) {
-            print(e);
-          }
+            // ignore: empty_catches
+          } catch (e) {}
           return true;
         },
         builder: (context, entries, _) =>
@@ -89,7 +88,7 @@ class OrderLayout extends StatelessWidget {
             message: "Profit is ${item.profit}",
             child: Column(
               children: [
-                Text("${item.totalMoney} EGP"),
+                Text("${item.totalPrice} EGP"),
                 const SizedBox(
                   height: 5,
                 ),

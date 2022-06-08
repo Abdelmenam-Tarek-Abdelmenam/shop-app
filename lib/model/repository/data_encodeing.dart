@@ -12,14 +12,11 @@ class DataEncoding {
 
   static dynamic decode(String old) {
     try {
-      print(old);
       final decodeBase64Json = base64.decode(old);
       final decodeZipJson = gzip.decode(decodeBase64Json);
       String originalJson = utf8.decode(decodeZipJson);
-      print(originalJson);
       return json.decode(originalJson);
     } catch (err) {
-      print(err);
       return "Wrong formatted";
     }
   }

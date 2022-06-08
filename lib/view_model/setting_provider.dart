@@ -40,9 +40,7 @@ class SettingProvider with ChangeNotifier {
       await _fileHandling.exportDataBase();
       EasyLoading.showSuccess(
           "File saved successfully,check at you file manager ");
-    } catch (err, stack) {
-      print(err);
-      print(stack);
+    } catch (err) {
       EasyLoading.showError("An error accrued,Please try again");
     }
   }
@@ -56,9 +54,7 @@ class SettingProvider with ChangeNotifier {
       } else {
         EasyLoading.showError("File is not valid");
       }
-    } catch (err, stack) {
-      print(err);
-      print(stack);
+    } catch (err) {
       EasyLoading.showError("Ann error accrued,Please try again");
     }
   }

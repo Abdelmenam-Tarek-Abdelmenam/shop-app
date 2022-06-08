@@ -13,8 +13,6 @@ class DbFileHandling {
     if (value != null && value.files.isNotEmpty) {
       File file = File(value.files.first.path!);
       String data = file.readAsStringSync();
-      print(file.readAsBytesSync());
-      print(data);
       Map<String, dynamic> dataMap = DataEncoding.decode(data);
       DataBaseRepository.instance.fromJson(dataMap);
       return true;
@@ -26,9 +24,7 @@ class DbFileHandling {
     File file = await _getNewFile('$_myFileName.$_myExtension');
     Map<String, ReturnedData> data =
         await DataBaseRepository.instance.getAllData();
-    print(data);
     String encoded = DataEncoding.encode(data);
-    print(encoded);
     file.writeAsStringSync(encoded);
     await DataBaseRepository.instance.initializeDatabase();
   }
@@ -66,7 +62,6 @@ class DbFileHandling {
         break;
       }
     }
-    print(newPath);
     newPath = newPath + "/$_myDirectory";
     return newPath;
   }

@@ -1,8 +1,6 @@
 name: shop
 description: App to mange all your shop operations
 
-# The following line prevents the package from being accidentally published to
-# pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
@@ -14,12 +12,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  #Icons
   cupertino_icons: ^1.0.2
-
-
+  font_awesome_flutter: ^10.1.0
   #operartion
   provider: ^6.0.3
   intl: ^0.17.0
@@ -35,7 +30,7 @@ dependencies:
   #widgets
   fl_chart: ^0.50.6
   google_nav_bar: ^5.0.6
-  font_awesome_flutter: ^10.1.0
+  flutter_typeahead: ^4.0.0
   #files
   image_picker: ^0.8.5+3
   path_provider: ^2.0.10
@@ -57,23 +52,13 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
+  # To add assets to your application, add an assets section
   assets:
     - assets/images/Logo/
     - assets/images/helpers/
-  #   - images/a_dot_ham.jpeg
 
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware.
 
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
 
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
   # fonts:
   #   - family: Schyler
   #     fonts:
@@ -86,5 +71,3 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages
