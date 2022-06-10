@@ -19,31 +19,6 @@ class AppProvider with ChangeNotifier {
   int totalOrders = -1;
   double totalRevenues = -1;
 
-  Future<void> startApp() async {
-    graphData = await DataBaseRepository.instance.getGraphData();
-    getInitialValues();
-
-    productsShow =
-        await DataBaseRepository.instance.getSomeProducts(productsShow);
-
-    entriesShow = await DataBaseRepository.instance.getSomeEntries(entriesShow);
-    ordersShow = await DataBaseRepository.instance.getSomeOrders(ordersShow);
-
-    notifyListeners();
-  }
-
-  Future<void> getInitialValues() async {
-    CalculateData data = await DataBaseRepository.instance.getInitialValues();
-    totalMoney = data.totalMoney;
-    totalMoneyToday = data.totalMoneyToday;
-    totalEntriesToday = data.totalEntriesToday;
-    totalOrdersToday = data.totalOrdersToday;
-    totalRevenues = data.totalRevenues;
-    totalRevenueToday = data.totalRevenueToday;
-    totalOrders = data.totalOrders;
-    notifyListeners();
-  }
-
   /// money box
   Future<void> addMoneyEdit(OldMoneyEdit edit) async {
     EasyLoading.show(status: "Adding money edit");
@@ -74,9 +49,11 @@ class AppProvider with ChangeNotifier {
       await DataBaseRepository.instance.insertEntry(entry);
       for (DealProduct item in entry.items) {
         await DataBaseRepository.instance.editProductDeal(item, true);
-        productsShow.data
-            .firstWhere((element) => element.id == item.id)
-            .amount += item.amount;
+        try {
+          productsShow.data
+              .firstWhere((element) => element.id == item.id)
+              .amount += item.amount;
+        } catch (_) {}
       }
 
       if (entry.type == PaymentType.paid) {
@@ -115,9 +92,11 @@ class AppProvider with ChangeNotifier {
       DataBaseRepository.instance.insertOrder(order);
       for (DealProduct item in order.items) {
         await DataBaseRepository.instance.editProductDeal(item, false);
-        productsShow.data
-            .firstWhere((element) => element.id == item.id)
-            .amount -= item.amount;
+        try {
+          productsShow.data
+              .firstWhere((element) => element.id == item.id)
+              .amount -= item.amount;
+        } catch (_) {}
       }
       ordersShow.addData(order);
       ordersShow.maxNumber++;
@@ -170,7 +149,7 @@ class AppProvider with ChangeNotifier {
     }
   }
 
-  Future<void> editProduct(Product product, int index) async {
+  Future<void> editProduct(Product product) async {
     EasyLoading.show(status: "Editing product");
     if (product.check) {
       EasyLoading.showError("Invalid sell price");
@@ -178,7 +157,10 @@ class AppProvider with ChangeNotifier {
     }
     try {
       await DataBaseRepository.instance.editProduct(product);
-      productsShow.data[index] = product;
+      int index = productsShow.data.indexWhere((e) => e.id == product.id);
+      if (index != -1) {
+        productsShow.data[index] = product;
+      }
       EasyLoading.showSuccess('Product edited successfully');
       notifyListeners();
     } catch (err) {
@@ -186,17 +168,42 @@ class AppProvider with ChangeNotifier {
     }
   }
 
-  Future<void> deleteProduct(Product product, int index) async {
+  Future<void> deleteProduct(Product product) async {
     EasyLoading.show(status: "Deleting product");
     try {
       await DataBaseRepository.instance.deleteProduct(product.id);
-      productsShow.data.removeAt(index);
+      int index = productsShow.data.indexWhere((e) => e.id == product.id);
+      if (index != -1) {
+        productsShow.data.removeAt(index);
+      }
       productsShow.maxNumber--;
       EasyLoading.showSuccess('Product deleted successfully');
       notifyListeners();
     } catch (err) {
       EasyLoading.showError("An error happened while add product");
     }
+  }
+
+  /// search
+  Future<List<Product>> findProducts(String pattern) async {
+    if (pattern.isEmpty) {
+      return [];
+    }
+    return DataBaseRepository.instance.searchProducts(pattern);
+  }
+
+  Future<List<EntryModel>> findEntries(String pattern) async {
+    if (pattern.isEmpty) {
+      return [];
+    }
+    return DataBaseRepository.instance.searchEntries(pattern);
+  }
+
+  Future<List<OrderModel>> findOrders(String pattern) async {
+    if (pattern.isEmpty) {
+      return [];
+    }
+    return DataBaseRepository.instance.searchOrders(pattern);
   }
 
   /// ListView Infinite scroll
@@ -231,5 +238,30 @@ class AppProvider with ChangeNotifier {
     }).catchError((err) {
       EasyLoading.showError("An error happened while reading more Entries");
     });
+  }
+
+  Future<void> startApp() async {
+    graphData = await DataBaseRepository.instance.getGraphData();
+    getInitialValues();
+
+    productsShow =
+        await DataBaseRepository.instance.getSomeProducts(productsShow);
+
+    entriesShow = await DataBaseRepository.instance.getSomeEntries(entriesShow);
+    ordersShow = await DataBaseRepository.instance.getSomeOrders(ordersShow);
+
+    notifyListeners();
+  }
+
+  Future<void> getInitialValues() async {
+    CalculateData data = await DataBaseRepository.instance.getInitialValues();
+    totalMoney = data.totalMoney;
+    totalMoneyToday = data.totalMoneyToday;
+    totalEntriesToday = data.totalEntriesToday;
+    totalOrdersToday = data.totalOrdersToday;
+    totalRevenues = data.totalRevenues;
+    totalRevenueToday = data.totalRevenueToday;
+    totalOrders = data.totalOrders;
+    notifyListeners();
   }
 }

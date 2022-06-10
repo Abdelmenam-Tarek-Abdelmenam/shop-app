@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, prefer_const_literals_to_create_immutables
 
 import 'package:equatable/equatable.dart';
 import 'package:collection/collection.dart';
@@ -14,7 +14,7 @@ class GraphsData extends Equatable {
 
   GraphsData({required this.money, required this.orders});
 
-  factory GraphsData.empty() => GraphsData(money: const [0], orders: const [0]);
+  factory GraphsData.empty() => GraphsData(money: [0], orders: [0]);
 
   bool get isEmpty => money.isEmpty && orders.isEmpty;
 
@@ -77,7 +77,6 @@ class ShowData<T> extends Equatable {
     data.insert(0, newData);
   }
 
-  // ignore: prefer_const_literals_to_create_immutables
   factory ShowData.empty() => ShowData(data: [], maxNumber: 0);
 
   bool get isEmpty => data.isEmpty;

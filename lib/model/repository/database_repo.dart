@@ -358,7 +358,6 @@ class DataBaseRepository {
   }
 
   Future<double> _totalMoneyToday(String date) async {
-    print(date);
     return _totalMoney(where: "${EntryTable.date} = '$date'");
   }
 

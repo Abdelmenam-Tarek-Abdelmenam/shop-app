@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/model/module/deals.dart';
+import '../../model/module/product.dart';
 import '../../view_model/add_deal_provider.dart';
 
 import '../ui/add_deals/add_deal.dart';
@@ -25,8 +26,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => MoneyDetailsView());
       case Routes.addProductRoute:
         return MaterialPageRoute(
-            builder: (_) =>
-                AddProductView(settings.arguments as AddProductArgument));
+            builder: (_) => AddProductView(settings.arguments as Product?));
       case Routes.addEntryRoute:
         return MaterialPageRoute(
             builder: (_) => ChangeNotifierProvider(

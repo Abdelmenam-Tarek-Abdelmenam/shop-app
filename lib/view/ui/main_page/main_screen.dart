@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/view/ui/main_page/delegates/orders_search.dart';
 import 'package:shop/view/ui/main_page/layouts/entry/entry_layout.dart';
 import 'package:shop/view/ui/main_page/layouts/home/home_layout.dart';
 import 'package:shop/view/ui/main_page/layouts/orders/order_layout.dart';
@@ -9,7 +10,8 @@ import 'package:shop/view/ui/main_page/layouts/setting/setting_layout.dart';
 
 import '../../../view_model/layout_provider.dart';
 import '../../resources/routes_manger.dart';
-import '../add_product/add_product.dart';
+import 'delegates/entries_search.dart';
+import 'delegates/product_search.dart';
 
 const List<String> appBarTitles = [
   "Home",
@@ -24,22 +26,25 @@ class MainView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<LayoutProvider, int>(
-      selector: (_, val) => val.activeLayout,
-      builder: (context, value, child) => Scaffold(
-        appBar: AppBar(
-          titleSpacing: 15,
-          title: Text(appBarTitles[value]),
-          actions: getRightAction(value, context),
+    return WillPopScope(
+      onWillPop: () => popDialog(context),
+      child: Selector<LayoutProvider, int>(
+        selector: (_, val) => val.activeLayout,
+        builder: (context, value, child) => Scaffold(
+          appBar: AppBar(
+            titleSpacing: 15,
+            title: Text(appBarTitles[value]),
+            actions: getRightAction(value, context),
+          ),
+          bottomNavigationBar: bottomNavigationBar(value, context),
+          body: [
+            HomeLayout(),
+            const OrderLayout(),
+            const EntryLayout(),
+            const ProductLayout(),
+            const SettingLayout(),
+          ][value],
         ),
-        bottomNavigationBar: bottomNavigationBar(value, context),
-        body: [
-          HomeLayout(),
-          const OrderLayout(),
-          const EntryLayout(),
-          const ProductLayout(),
-          const SettingLayout(),
-        ][value],
       ),
     );
   }
@@ -51,10 +56,15 @@ class MainView extends StatelessWidget {
             onPressed: () {
               switch (activeLayout) {
                 case 1:
+                  showSearch(context: context, delegate: OrderSearchDelegate());
                   break;
                 case 2:
+                  showSearch(
+                      context: context, delegate: EntriesSearchDelegate());
                   break;
                 case 3:
+                  showSearch(
+                      context: context, delegate: ProductSearchDelegate());
                   break;
               }
             },
@@ -70,7 +80,7 @@ class MainView extends StatelessWidget {
                   break;
                 case 3:
                   Navigator.pushNamed(context, Routes.addProductRoute,
-                      arguments: AddProductArgument.empty());
+                      arguments: null);
                   break;
               }
             },
@@ -113,4 +123,28 @@ class MainView extends StatelessWidget {
                 ][index],
                 text: appBarTitles[index],
               )));
+
+  Future<bool> popDialog(BuildContext context) async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Are you Sure'),
+            content: const Text('you want Exit ?'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text(
+                  'Yes',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+        )) ??
+        false;
+  }
 }

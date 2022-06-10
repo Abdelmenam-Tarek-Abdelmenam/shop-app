@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/view/ui/main_page/layouts/orders/widgets/order_design.dart';
 
 import '../../../../../model/module/deals.dart';
 import '../../../../../model/module/ui_models.dart';
 import '../../../../../view_model/app_provider.dart';
-import '../../../../resources/routes_manger.dart';
 
 class OrderLayout extends StatelessWidget {
   const OrderLayout({Key? key}) : super(key: key);
@@ -62,7 +62,7 @@ class OrderLayout extends StatelessWidget {
                 shrinkWrap: true,
                 itemBuilder: (context, index) => index == entries.maxNumber
                     ? entries.lastItem
-                    : listItem(context, entries.data[index]),
+                    : OrderDesign(entries.data[index]),
                 separatorBuilder: (_, __) => const SizedBox(
                   height: 5,
                 ),
@@ -74,48 +74,4 @@ class OrderLayout extends StatelessWidget {
       ),
     );
   }
-
-  Widget listItem(BuildContext context, OrderModel item) => InkWell(
-        onTap: () => Navigator.of(context).pushNamed(
-          Routes.addOrderRoute,
-          arguments: item,
-        ),
-        child: ListTile(
-          title: Text(
-            item.name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          isThreeLine: false,
-          subtitle: Text("${item.date} | ${item.itemsCount} items"),
-          trailing: FittedBox(
-            fit: BoxFit.fill,
-            child: Tooltip(
-              message: "Profit is ${item.profit}",
-              child: Column(
-                children: [
-                  Text("${item.totalPrice} EGP"),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        item.type.icon,
-                        size: 20,
-                        color: item.type.color,
-                      ),
-                      Text(item.type.text,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1!
-                              .copyWith(color: item.type.color))
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
 }

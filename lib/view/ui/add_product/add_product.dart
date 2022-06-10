@@ -13,33 +13,23 @@ import '../../../model/module/product.dart';
 import '../../resources/styles_manager.dart';
 import '../../shared/functions/dialog.dart';
 
-class AddProductArgument {
-  final Product? product;
-  final int? index;
-  AddProductArgument(this.product, this.index);
-
-  AddProductArgument.empty()
-      : product = null,
-        index = null;
-}
-
 // ignore: must_be_immutable
 class AddProductView extends StatelessWidget {
-  AddProductView(this.arg, {Key? key}) : super(key: key);
-  final AddProductArgument arg;
+  AddProductView(this.product, {Key? key}) : super(key: key);
+  final Product? product;
 
-  late Uint8List? img = arg.product?.img;
+  late Uint8List? img = product?.img;
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController =
-      TextEditingController(text: arg.product?.name);
+      TextEditingController(text: product?.name);
   late final TextEditingController _notesController =
-      TextEditingController(text: arg.product?.notes);
+      TextEditingController(text: product?.notes);
   late final TextEditingController _amountController =
-      TextEditingController(text: arg.product?.amount.toString() ?? "10");
+      TextEditingController(text: product?.amount.toString() ?? "10");
   late final TextEditingController _realPriceController =
-      TextEditingController(text: arg.product?.realPrice.toString() ?? "0");
+      TextEditingController(text: product?.realPrice.toString() ?? "0");
   late final TextEditingController _sellPriceController =
-      TextEditingController(text: arg.product?.sellPrice.toString() ?? "0");
+      TextEditingController(text: product?.sellPrice.toString() ?? "0");
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +41,7 @@ class AddProductView extends StatelessWidget {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 Product product = Product(
-                    id: arg.product?.id ?? 0,
+                    id: this.product?.id ?? 0,
                     name: _nameController.text,
                     notes: _notesController.text,
                     amount: double.parse(_amountController.text),
@@ -59,12 +49,10 @@ class AddProductView extends StatelessWidget {
                     sellPrice: double.parse(_sellPriceController.text),
                     date: DateTime.now().formatDate,
                     img: img);
-                if (arg.index == null) {
+                if (this.product == null) {
                   await context.read<AppProvider>().addProduct(product);
                 } else {
-                  await context
-                      .read<AppProvider>()
-                      .editProduct(product, arg.index!);
+                  await context.read<AppProvider>().editProduct(product);
                 }
                 if (Navigator.canPop(context)) {
                   // Navigator.pop(context);
@@ -73,8 +61,8 @@ class AddProductView extends StatelessWidget {
             },
           ),
           appBar: AppBar(
-            title: Text("${arg.product == null ? "Add" : "Edit"} Product"),
-            actions: arg.product == null
+            title: Text("${product == null ? "Add" : "Edit"} Product"),
+            actions: product == null
                 ? null
                 : [
                     IconButton(
@@ -86,7 +74,7 @@ class AddProductView extends StatelessWidget {
                                 "Are you sure you want to delete this product?")) {
                           await context
                               .read<AppProvider>()
-                              .deleteProduct(arg.product!, arg.index!);
+                              .deleteProduct(product!);
                         }
                       },
                     )
@@ -99,7 +87,7 @@ class AddProductView extends StatelessWidget {
               child: ListView(
                 children: [
                   Text(
-                      "Last Updated: ${arg.product?.date ?? DateTime.now().formatDate}",
+                      "Last Updated: ${product?.date ?? DateTime.now().formatDate}",
                       style: Theme.of(context).textTheme.headline4),
                   const Divider(),
                   Container(
@@ -191,7 +179,7 @@ class AddProductView extends StatelessWidget {
             alignment: Alignment.bottomRight,
             children: [
               Hero(
-                tag: arg.product?.id ?? 0,
+                tag: product?.id ?? 0,
                 child: ClipRRect(
                   borderRadius: StyleManager.border, // Image border
                   child: img != null
