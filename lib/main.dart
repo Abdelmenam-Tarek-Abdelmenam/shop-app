@@ -11,7 +11,7 @@ import 'package:shop/view_model/setting_provider.dart';
 import 'model/local/pref_repository.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  
 
   WidgetsFlutterBinding.ensureInitialized();
   await DataBaseRepository.instance.initializeDatabase();

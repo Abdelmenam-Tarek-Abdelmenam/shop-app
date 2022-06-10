@@ -11,22 +11,36 @@ class AppProvider with ChangeNotifier {
   ShowData<Product> productsShow = ShowData.empty();
   ShowData<EntryModel> entriesShow = ShowData.empty();
   ShowData<OrderModel> ordersShow = ShowData.empty();
-  double moneyInBox = 300;
-  int revenue = 50;
-  int orders = 7;
-
-  int entries = 2;
+  double totalMoneyToday = -1;
+  int totalOrdersToday = -1;
+  int totalEntriesToday = -1;
+  double totalRevenueToday = -1;
+  double totalMoney = -1;
+  int totalOrders = -1;
+  double totalRevenues = -1;
 
   Future<void> startApp() async {
     graphData = await DataBaseRepository.instance.getGraphData();
-    graphData.orders = [4, 5, 7, 2, 1, 4, 8, 0, 4];
-    graphData.money = [450, 300, 210, 400, 100, 770, 540, 0, 430];
+    getInitialValues();
+
     productsShow =
         await DataBaseRepository.instance.getSomeProducts(productsShow);
 
     entriesShow = await DataBaseRepository.instance.getSomeEntries(entriesShow);
     ordersShow = await DataBaseRepository.instance.getSomeOrders(ordersShow);
 
+    notifyListeners();
+  }
+
+  Future<void> getInitialValues() async {
+    CalculateData data = await DataBaseRepository.instance.getInitialValues();
+    totalMoney = data.totalMoney;
+    totalMoneyToday = data.totalMoneyToday;
+    totalEntriesToday = data.totalEntriesToday;
+    totalOrdersToday = data.totalOrdersToday;
+    totalRevenues = data.totalRevenues;
+    totalRevenueToday = data.totalRevenueToday;
+    totalOrders = data.totalOrders;
     notifyListeners();
   }
 
@@ -37,9 +51,11 @@ class AppProvider with ChangeNotifier {
       await DataBaseRepository.instance.insertMoneyEdit(edit);
       EasyLoading.showSuccess('Money edit added successfully');
       if (edit.type == EditType.add) {
-        moneyInBox += edit.amount;
+        totalMoney += edit.amount.round();
+        totalMoneyToday += edit.amount.round();
       } else {
-        moneyInBox -= edit.amount;
+        totalMoney -= edit.amount.round();
+        totalMoneyToday -= edit.amount.round();
       }
       notifyListeners();
     } catch (err) {
@@ -62,9 +78,15 @@ class AppProvider with ChangeNotifier {
             .firstWhere((element) => element.id == item.id)
             .amount += item.amount;
       }
-      entriesShow.addData(entry);
-      if (entry.type == PaymentType.paid) moneyInBox -= entry.totalPrice;
+
+      if (entry.type == PaymentType.paid) {
+        graphData.removeMoney(entry.totalPrice);
+        totalMoneyToday -= entry.totalPrice.round();
+        totalMoney -= entry.totalPrice.round();
+      }
       entriesShow.maxNumber++;
+      entriesShow.addData(entry);
+      totalEntriesToday++;
       EasyLoading.showSuccess('Entry added successfully');
       notifyListeners();
     } catch (err) {
@@ -99,7 +121,15 @@ class AppProvider with ChangeNotifier {
       }
       ordersShow.addData(order);
       ordersShow.maxNumber++;
-      if (order.type == PaymentType.paid) moneyInBox += order.totalPrice;
+      totalOrdersToday++;
+      totalOrders++;
+      if (order.type == PaymentType.paid) {
+        graphData.addMoney(order.totalPrice);
+        totalMoneyToday += order.totalPrice.round();
+        totalMoney += order.totalPrice.round();
+        totalRevenueToday += order.profit.round();
+        totalRevenues += order.profit.round();
+      }
 
       EasyLoading.showSuccess('Order added successfully');
       notifyListeners();
@@ -201,13 +231,5 @@ class AppProvider with ChangeNotifier {
     }).catchError((err) {
       EasyLoading.showError("An error happened while reading more Entries");
     });
-  }
-
-  /// till here
-
-  void getInitialValues() {
-    if (moneyInBox != -1) return;
-    moneyInBox = 0;
-    notifyListeners();
   }
 }

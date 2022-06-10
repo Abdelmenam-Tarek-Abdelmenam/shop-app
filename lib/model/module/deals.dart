@@ -56,7 +56,7 @@ class EntryModel extends Deal {
   factory EntryModel.fromJson(Map<String, dynamic> map) {
     return EntryModel(
       id: map[EntryTable.id],
-      type: map[EntryTable.type] == 0 ? PaymentType.paid : PaymentType.not,
+      type: map[EntryTable.type] == 1 ? PaymentType.paid : PaymentType.not,
       items: json
           .decode(map[EntryTable.items])
           .map<DealProduct>((item) => DealProduct.fromJson(item))
@@ -85,7 +85,7 @@ class EntryModel extends Deal {
         EntryTable.name: name,
         EntryTable.time: time,
         EntryTable.totalMoney: totalPrice,
-        EntryTable.type: type == PaymentType.paid ? 0 : 1
+        EntryTable.type: type == PaymentType.paid ? 1 : 0
       };
 }
 
@@ -119,7 +119,7 @@ class OrderModel extends Deal {
 
   Map<String, dynamic> get toJson => {
         OrderTable.id: id,
-        OrderTable.type: type == PaymentType.paid ? 0 : 1,
+        OrderTable.type: type == PaymentType.paid ? 1 : 0,
         OrderTable.items: json.encode(items.map((e) => e.toJson).toList()),
         OrderTable.date: date,
         OrderTable.name: name,
@@ -131,7 +131,7 @@ class OrderModel extends Deal {
   factory OrderModel.fromJson(Map<String, dynamic> map) {
     return OrderModel(
       id: map[OrderTable.id],
-      type: map[OrderTable.type] == 0 ? PaymentType.paid : PaymentType.not,
+      type: map[OrderTable.type] == 1 ? PaymentType.paid : PaymentType.not,
       items: json
           .decode(map[OrderTable.items])
           .map<DealProduct>((item) => DealProduct.fromJson(item))

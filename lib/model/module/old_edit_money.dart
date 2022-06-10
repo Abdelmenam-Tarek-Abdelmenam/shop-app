@@ -20,7 +20,7 @@ class OldMoneyEdit {
   factory OldMoneyEdit.fromJson(Map<String, dynamic> json) {
     return OldMoneyEdit(
         id: json[MoneyEditTable.id],
-        type: json[MoneyEditTable.type] == 0 ? EditType.add : EditType.remove,
+        type: json[MoneyEditTable.type] == 1 ? EditType.add : EditType.remove,
         notes: json[MoneyEditTable.notes],
         date: json[MoneyEditTable.date],
         amount: json[MoneyEditTable.amount] * 1.0,
@@ -34,7 +34,7 @@ class OldMoneyEdit {
       MoneyEditTable.date: date,
       MoneyEditTable.amount: amount,
       MoneyEditTable.time: time,
-      MoneyEditTable.type: type == EditType.add ? 0 : 1
+      MoneyEditTable.type: type == EditType.add ? 1 : -1
     };
   }
 }

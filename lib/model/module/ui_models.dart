@@ -18,6 +18,18 @@ class GraphsData extends Equatable {
 
   bool get isEmpty => money.isEmpty && orders.isEmpty;
 
+  void addMoney(double value) {
+    money[money.length - 1] += value.round();
+  }
+
+  void removeMoney(double value) {
+    money[money.length - 1] -= value.round();
+  }
+
+  void addOrder(int order) {
+    orders[orders.length - 1] += order;
+  }
+
   @override
   List<Object?> get props => [money.firstOrNull, orders.firstOrNull];
 }
@@ -82,4 +94,39 @@ class ShowData<T> extends Equatable {
 
   @override
   List<Object?> get props => [data.length];
+}
+
+class CalculateData {
+  double totalMoneyToday;
+  int totalOrdersToday;
+  int totalEntriesToday;
+  double totalRevenueToday;
+  double totalMoney;
+  int totalOrders;
+  double totalRevenues;
+
+  CalculateData({
+    required this.totalMoneyToday,
+    required this.totalOrdersToday,
+    required this.totalEntriesToday,
+    required this.totalRevenueToday,
+    required this.totalMoney,
+    required this.totalOrders,
+    required this.totalRevenues,
+  });
+
+  factory CalculateData.empty() => CalculateData(
+        totalMoneyToday: -1,
+        totalOrdersToday: -1,
+        totalEntriesToday: -1,
+        totalRevenueToday: -1,
+        totalMoney: -1,
+        totalOrders: -1,
+        totalRevenues: -1,
+      );
+
+  @override
+  String toString() {
+    return 'CalculateData{totalMoneyToday: $totalMoneyToday, totalOrdersToday: $totalOrdersToday, totalEntriesToday: $totalEntriesToday, totalRevenueToday: $totalRevenueToday, totalMoney: $totalMoney, totalOrders: $totalOrders, totalRevenues: $totalRevenues}';
+  }
 }

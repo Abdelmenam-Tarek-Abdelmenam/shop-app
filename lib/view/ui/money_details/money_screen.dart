@@ -60,17 +60,17 @@ class MoneyDetailsView extends StatelessWidget {
                   ),
                   divider(),
                   Selector<AppProvider, double>(
-                    selector: (_, val) => val.moneyInBox,
+                    selector: (_, val) => val.totalMoneyToday,
                     builder: (context, val, _) => Text(
-                      "Revenue ${val == -1 ? '-' : val} EGP",
+                      "${val == -1 ? '-' : val.round()} EGP",
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                   ),
                   divider(),
-                  Selector<AppProvider, int>(
-                    selector: (_, val) => val.revenue,
+                  Selector<AppProvider, double>(
+                    selector: (_, val) => val.totalRevenues,
                     builder: (context, val, _) => Text(
-                      "Revenue ${val == -1 ? '-' : val} EGP",
+                      "Revenue ${val == -1 ? '-' : val.round()} EGP",
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                   ),
@@ -82,7 +82,7 @@ class MoneyDetailsView extends StatelessWidget {
                   Text("Deals", style: Theme.of(context).textTheme.subtitle1),
                   divider(),
                   Selector<AppProvider, int>(
-                    selector: (_, val) => val.orders,
+                    selector: (_, val) => val.totalOrdersToday,
                     builder: (context, val, _) => Text(
                       "Orders ${val == -1 ? '-' : val}",
                       style: Theme.of(context).textTheme.subtitle1,
@@ -90,7 +90,7 @@ class MoneyDetailsView extends StatelessWidget {
                   ),
                   divider(),
                   Selector<AppProvider, int>(
-                    selector: (_, val) => val.entries,
+                    selector: (_, val) => val.totalEntriesToday,
                     builder: (context, val, _) => Text(
                       "Entry ${val == -1 ? '-' : val}",
                       style: Theme.of(context).textTheme.subtitle2,

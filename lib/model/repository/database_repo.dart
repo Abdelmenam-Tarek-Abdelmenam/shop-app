@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shop/model/module/deals.dart';
 import 'package:shop/model/module/old_edit_money.dart';
 import 'package:shop/model/module/product.dart';
+import 'package:shop/model/repository/dates_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../module/ui_models.dart';
@@ -44,7 +45,52 @@ class DataBaseRepository {
 
   /// get Data for showing in home screen
   Future<GraphsData> getGraphData() async {
+    GraphsData data = GraphsData.empty();
+    int maxOrders = await _countData(OrderTable.tableName);
+    ReturnedData ordersData = await _database.query(OrderTable.tableName,
+        columns: [
+          'count(${OrderTable.date}) as results',
+        ],
+        limit: 30,
+        offset: maxOrders - 30,
+        groupBy: OrderTable.date);
+    data.orders = ordersData.map((e) => e['results'] as int).toList();
+    ReturnedData moneyData = await _database.query(OrderTable.tableName,
+        columns: [
+          'sum(${OrderTable.totalMoney}*${OrderTable.type}) as results',
+        ],
+        limit: 30,
+        offset: maxOrders - 30,
+        groupBy: OrderTable.date);
+    data.money = moneyData.map((e) => e['results'] as int).toList();
     return GraphsData.empty();
+  }
+
+  Future<CalculateData> getInitialValues() async {
+    CalculateData data = CalculateData.empty();
+    final date = DateTime.now().formatDate;
+    data.totalOrders = await _countData(OrderTable.tableName);
+    data.totalOrdersToday =
+        await _countWhere(OrderTable.tableName, "${OrderTable.date} = '$date'");
+    data.totalEntriesToday =
+        await _countWhere(EntryTable.tableName, "${OrderTable.date} = '$date'");
+    ReturnedData temp = await _database.query(OrderTable.tableName,
+        columns: [
+          'sum(${OrderTable.profit}*${OrderTable.type}) as results',
+        ],
+        where: "${OrderTable.date} = '$date'");
+    data.totalRevenueToday = temp.first['results'];
+    temp = await _database.query(
+      OrderTable.tableName,
+      columns: [
+        'sum(${OrderTable.profit}*${OrderTable.type}) as results',
+      ],
+    );
+    data.totalRevenues = temp.first['results'] ?? 0;
+    data.totalMoney = await _totalMoney();
+    data.totalMoneyToday = await _totalMoneyToday(date);
+
+    return data;
   }
 
   Future<ShowData<Product>> getSomeProducts(ShowData<Product> old) async {
@@ -148,13 +194,6 @@ class DataBaseRepository {
         where: '${ProductsTable.id} = ${product.id}');
   }
 
-  Future<void> editEntry(EntryModel entry) async {
-    Map<String, dynamic> map = entry.toJson;
-    map.remove(ProductsTable.id);
-    await _database.update(EntryTable.tableName, map,
-        where: '${EntryTable.id} = ${entry.id}');
-  }
-
   Future<void> editProductDeal(DealProduct product, bool isEntry) async {
     Product raw = await getProduct(product.id);
     if (isEntry) {
@@ -164,6 +203,13 @@ class DataBaseRepository {
       raw.amount -= product.amount;
     }
     await editProduct(raw);
+  }
+
+  Future<void> editEntry(EntryModel entry) async {
+    Map<String, dynamic> map = entry.toJson;
+    map.remove(ProductsTable.id);
+    await _database.update(EntryTable.tableName, map,
+        where: '${EntryTable.id} = ${entry.id}');
   }
 
   Future<void> editOrder(OrderModel order) async {
@@ -180,15 +226,6 @@ class DataBaseRepository {
   }
 
   /// get reports data
-  Future<Map<String, ReturnedData>> getAllData() async {
-    Map<String, ReturnedData> data = {};
-    for (String table in _TablesSchema.allNames) {
-      data[table] = await _database.query(table);
-    }
-
-    return data;
-  }
-
   Future<void> fromJson(Map<String, dynamic> json) async {
     await delete();
     await initializeDatabase();
@@ -197,6 +234,15 @@ class DataBaseRepository {
         await _database.insert(table, map);
       }
     }
+  }
+
+  Future<Map<String, ReturnedData>> getAllData() async {
+    Map<String, ReturnedData> data = {};
+    for (String table in _TablesSchema.allNames) {
+      data[table] = await _database.query(table);
+    }
+
+    return data;
   }
 
   Future<ReturnedData> getZeroAmountProduct() async {
@@ -273,6 +319,47 @@ class DataBaseRepository {
     ReturnedData value =
         await _database.rawQuery("SELECT COUNT(*) FROM $tableName");
     return value[0]['COUNT(*)'];
+  }
+
+  Future<int> _countWhere(String tableName, String where) async {
+    ReturnedData value =
+        await _database.query(tableName, columns: ["COUNT(*)"], where: where);
+    return value[0]['COUNT(*)'];
+  }
+
+  Future<double> _totalMoney({String? where}) async {
+    double money = 0;
+    ReturnedData temp = await _database.query(
+      OrderTable.tableName,
+      where: where,
+      columns: [
+        'sum(${OrderTable.totalMoney}*${OrderTable.type}) as results',
+      ],
+    );
+    money += temp[0]['results'] ?? 0;
+    temp = await _database.query(
+      MoneyEditTable.tableName,
+      where: where,
+      columns: [
+        'sum(${MoneyEditTable.amount}*${MoneyEditTable.type}) as results',
+      ],
+    );
+    money += temp[0]['results'] ?? 0;
+    temp = await _database.query(
+      EntryTable.tableName,
+      where: where,
+      columns: [
+        'sum(${EntryTable.totalMoney}*${EntryTable.type}) as results',
+      ],
+    );
+    money -= temp[0]['results'] ?? 0;
+
+    return money;
+  }
+
+  Future<double> _totalMoneyToday(String date) async {
+    print(date);
+    return _totalMoney(where: "${EntryTable.date} = '$date'");
   }
 
   Future<void> initializeDatabase() async {
